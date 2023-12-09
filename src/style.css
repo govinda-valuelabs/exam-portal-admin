@@ -5,6 +5,9 @@
 .exam-logo {
     height: 40px;
 }
+.sidebar {
+    width: 200px;
+}
 .side-h-screen {
     height: calc(100vh - 188px);
 }
