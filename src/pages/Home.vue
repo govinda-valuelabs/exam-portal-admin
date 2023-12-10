@@ -1,9 +1,5 @@
 <template>
-    <h1>Home</h1>
+    <AuthenticatedLayout>
+        <h1>Home Page</h1>
+    </AuthenticatedLayout>
 </template>
-<script>
-console.log('Govinda Home');
-export default {
-    name: 'Home'
-}
-</script>

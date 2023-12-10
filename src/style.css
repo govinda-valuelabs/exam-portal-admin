@@ -11,3 +11,8 @@
 .side-h-screen {
     height: calc(100vh - 188px);
 }
+.sign-in, .sign-up {
+    margin: auto;
+    display: block;
+    width: 300px;
+}

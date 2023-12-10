@@ -1,8 +1,9 @@
 <template>
-    <h1>Question</h1>
+    <AuthenticatedLayout>
+        <h1>Question Page</h1>
+    </AuthenticatedLayout>
 </template>
 <script>
-console.log('Question Page');
 export default {
     name: 'Question'
 }
