@@ -1,12 +1,74 @@
-<template>
-    <h1>Student</h1>
-</template>
 <script>
-
+import AuthenticatedLayout from "../layouts/AuthenticatedLayout.vue";
+import Loader from "../components/Loader.vue";
+import axios from "axios";
 export default {
-    name: 'Student',
-    mounted() {
-        console.log('Student Page');
-    }
-}
+  components: { AuthenticatedLayout, Loader },
+  name: "Student",
+  data: () => {
+    return {
+      students: [],
+      loading: true,
+    };
+  },
+  mounted() {
+    this.getStudents();
+  },
+  methods: {
+    async getStudents() {
+      this.loading = true;
+      try {
+        const results = await axios.get("http://localhost:8080/student");
+        if (results.status == 200) {
+          this.students = results.data;
+        }
+      } catch (error) {
+        console.log("Error ", error.message);
+      }
+      this.loading = false;
+    },
+  },
+};
 </script>
+<template>
+  <AuthenticatedLayout>
+    <div class="table w-full">
+      <div class="table-header-group">
+        <h1 class="float-left text-[32px]">Students</h1>
+        <router-link
+          to="/student/create"
+          class="text-white bg-purple-700 hover:bg-purple-800 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900 float-right mt-2 mr-4 cursor-pointer"
+          >Add Student</router-link
+        >
+      </div>
+      <Loader v-if="loading" />
+      <table
+        v-else
+        class="w-full text-sm text-left rtl:text-right text-slate-950 dark:text-slate-950"
+      >
+        <thead
+          class="text-xs text-slate-950 uppercase bg-gray-50 dark:text-slate-950"
+        >
+          <tr>
+            <th scope="col" class="px-6 py-3">Name</th>
+            <th scope="col" class="px-6 py-3">Email</th>
+            <th scope="col" class="px-6 py-3">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(student, index) in students" :key="index"  class="bg-white border-b dark:border-gray-700">
+            <td class="px-6 py-4">{{ student.name }}</td>
+            <td class="px-6 py-4">{{ student.email }}</td>
+            <td class="px-6 py-4">
+              <router-link
+                :to="`/student/edit/${student._id}`"
+                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                >Edit</router-link
+              >
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </AuthenticatedLayout>
+</template>

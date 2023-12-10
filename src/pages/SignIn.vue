@@ -1,6 +1,8 @@
 <script>
 import axios from 'axios';
+import GuestLayout from '../layouts/GuestLayout.vue';
 export default {
+  components: { GuestLayout },
   data() {
     return {
       email: '',
@@ -16,22 +18,18 @@ export default {
       } else {
         this.empty = false;
         try {
-          const result = await axios.post('http://localhost:8080/user/signin', { email: this.email, password: this.password });
+          const result = await axios.post('http://localhost:8080/user/signin', { userEmail: this.email, password: this.password });
           console.log('result ', result);
-          if (result.status == 201) {
+          if (result.status == 200) {
+            localStorage.setItem('token', result.data.token);
+            localStorage.setItem('name', result.data.name);
+            localStorage.setItem('email', result.data.email);
             this.$router.push('/');
           }
         } catch (error) {
           
         }
       }
-
-      // Send the data to the server or perform any other actions
-      console.log('Form submitted:', this.email, this.password);
-
-      // Reset the form fields
-      this.email = '';
-      this.password = '';
     }
   }
 };
@@ -60,6 +58,7 @@ export default {
         <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
           Sign In
         </button>
+        <p class="mb-1 float-right">Don't have an account? <router-link class="text-blue-500" to="/signup">Sign up</router-link>.</p>
       </form>
     </div>
   </GuestLayout></template>

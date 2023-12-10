@@ -20,6 +20,7 @@ const routes = createRouter({
             component: Student
         },
         {path: '/student/create', name: 'createstudent', component: StudentForm},
+        {path: '/student/edit/:id', name: 'editstudent', component: StudentForm},
         { path: '/question', name: 'question', component: Question },
     ]
 });
