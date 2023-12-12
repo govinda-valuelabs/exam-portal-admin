@@ -6,6 +6,7 @@ import Question from '../pages/Question.vue';
 import StudentForm from '../views/StudentForm.vue';
 import SignUp from '../pages/SignUp.vue';
 import SignIn from '../pages/SignIn.vue';
+import QuestionForm from '../views/QuestionForm.vue';
 
 const routes = createRouter({
     history: createWebHistory(),
@@ -22,6 +23,8 @@ const routes = createRouter({
         {path: '/student/create', name: 'createstudent', component: StudentForm},
         {path: '/student/edit/:id', name: 'editstudent', component: StudentForm},
         { path: '/question', name: 'question', component: Question },
+        { path: '/question/create', name: 'createquestion', component: QuestionForm },
+        { path: '/question/edit/:id', name: 'editquestion', component: QuestionForm },
     ]
 });
 
