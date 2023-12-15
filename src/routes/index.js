@@ -7,6 +7,8 @@ import StudentForm from '../views/StudentForm.vue';
 import SignUp from '../pages/SignUp.vue';
 import SignIn from '../pages/SignIn.vue';
 import QuestionForm from '../views/QuestionForm.vue';
+import Exam from '../pages/Exam.vue';
+import ExamDetail from '../views/ExamDetail.vue';
 
 const routes = createRouter({
     history: createWebHistory(),
@@ -25,6 +27,8 @@ const routes = createRouter({
         { path: '/question', name: 'question', component: Question },
         { path: '/question/create', name: 'createquestion', component: QuestionForm },
         { path: '/question/edit/:id', name: 'editquestion', component: QuestionForm },
+        { path: '/exam', name: 'exam', component: Exam },
+        { path: '/exam/detail/:id', name: 'editexam', component: ExamDetail }
     ]
 });
 
