@@ -36,7 +36,7 @@ export default {
       this.loading = false;
     },
     formatDateTime(datestring) {
-      return moment(datestring).format('YYYY-MM-DD H:m:s a');
+      return moment(datestring).format('YYYY-MM-DD HH:mm:ss a');
     },
     onClickDelete(examId) {
       this.examId = examId;
@@ -75,7 +75,8 @@ export default {
           <tr>
             <th scope="col" class="px-6 py-3">S.No</th>
             <th scope="col" class="px-6 py-3">Student</th>
-            <th scope="col" class="px-6 py-3">Exam Time</th>
+            <th scope="col" class="px-6 py-3">Start Time</th>
+            <th scope="col" class="px-6 py-3">End Time</th>
             <th scope="col" class="px-6 py-3">Total Attempt</th>
             <th scope="col" class="px-6 py-3 text-right">Action</th>
           </tr>
@@ -88,6 +89,7 @@ export default {
           >
             <td class="px-6 py-4">{{ index + 1 }}.</td>
             <td class="px-6 py-4">{{ exam.studentId.name }}</td>
+            <td class="px-6 py-4">{{ formatDateTime(exam.startTime) }}</td>
             <td class="px-6 py-4">{{ formatDateTime(exam.startTime) }}</td>
             <td class="px-6 py-4">{{ exam.questions.length }}</td>
             <td class="px-6 py-4 text-right">

@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Home from '../pages/Home.vue';
 import User from '../pages/User.vue';
+import UserForm from '../views/UserForm.vue';
 import Student from '../pages/Student.vue';
 import Question from '../pages/Question.vue';
 import StudentForm from '../views/StudentForm.vue';
@@ -17,6 +18,8 @@ const routes = createRouter({
         { path: '/signup', name: 'signup', component: SignUp },
         { path: '/signin', name: 'signin', component: SignIn },
         { path: '/user', name: 'user', component: User },
+        { path: '/user/create', name: 'createuser', component: UserForm },
+        { path: '/user/edit/:id', name: 'edituser', component: UserForm },
         {
             path: '/student',
             name: 'student',
