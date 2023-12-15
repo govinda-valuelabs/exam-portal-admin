@@ -12,6 +12,9 @@ export default {
       exam: null,
       loading: false,
       questions: [],
+      totalRead: 0,
+      totalAttempt: 0,
+      totalCorrect: 0
     };
   },
   mounted() {
@@ -19,6 +22,26 @@ export default {
     this.getQuestions();
   },
   methods: {
+    calculateQuestions() {
+      let totalAttempt = 0;
+      let totalRead = 0;
+      let totalCorrect = 0;
+      this.exam.questions.forEach((q) => {
+        totalRead ++;
+        if (q.status == 'attempted') {
+          totalAttempt ++;
+        }
+
+        const question = this.questions.find((q1) => q.questionId == q1._id);
+
+        if (question.answer == q.optionId) {
+          totalCorrect ++;
+        }
+      });
+      this.totalRead = totalRead;
+      this.totalAttempt = totalAttempt;
+      this.totalCorrect = totalCorrect;
+    },
     getStudentAnswer(qst) {
       let question = isProxy(qst) ? toRaw(qst) : qst;
       this.exam.questions = toRaw(this.exam.questions);
@@ -38,6 +61,7 @@ export default {
         const result = await axios.get('http://localhost:8080/question');
         if (result.status == 200) {
           this.questions = result.data;
+          this.calculateQuestions();
         }
       } catch (error) {
 
@@ -60,9 +84,11 @@ export default {
   <AuthenticatedLayout>
     <div class="space-y-12 ml-6 w-1/2">
       <div class="border-b border-gray-900/10 pb-12">
-        <h2 class="text-[32px] font-semibold leading-7 text-gray-900 mt-4">
+        <h2 class="text-[32px] font-semibold leading-7 text-gray-900 mb-4 mt-4">
           Exam Details
         </h2>
+        <p class="text-blue-700 font-bold text-[18px]">Total Read: {{ totalRead }}, Total Attempt : {{ totalAttempt }}, Total Correct : {{ totalCorrect }}</p>
+        <hr class="mt-6" />
         <Loader v-if="loading" class="mt-10" />
         <div v-else class="container p-4">
           <ul class="w-full">
