@@ -36,10 +36,6 @@ export default {
       this.questionId = questionId;
       this.showModal = true;
     },
-    getAnswer(question) {
-      let option = question.options.find((op) => op._id == question.answer);
-      return option ? option.value : '';
-    },
     async confirmDelete() {
       try {
         const result = await axios.delete('http://localhost:8080/question/' + this.questionId);
@@ -90,7 +86,7 @@ export default {
           >
             <td class="px-6 py-4">{{ index + 1 }}.</td>
             <td class="px-6 py-4">{{ question.title }}</td>
-            <td class="px-6 py-4">{{ getAnswer(question) }}</td>
+            <td class="px-6 py-4">{{ question.answer.value }}</td>
             <td class="px-6 py-4 text-right">
               <router-link
                 :to="`/question/edit/${question._id}`"

@@ -16,3 +16,12 @@
     display: block;
     width: 400px;
 }
+
+.input-text {
+    border: 1px solid slategray;
+    border-radius: 5px;
+}
+#my-chart-id {
+    max-width: 300px;
+    max-height: 300px;
+}

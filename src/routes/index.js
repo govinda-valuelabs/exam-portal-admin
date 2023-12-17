@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import Home from '../pages/Home.vue';
+import Dashboard from '../pages/Dashboard.vue';
 import User from '../pages/User.vue';
 import UserForm from '../views/UserForm.vue';
 import Student from '../pages/Student.vue';
@@ -14,7 +14,7 @@ import ExamDetail from '../views/ExamDetail.vue';
 const routes = createRouter({
     history: createWebHistory(),
     routes: [
-        { path: '/', name: 'dashboard', component: Home },
+        { path: '/', name: 'dashboard', component: Dashboard },
         { path: '/signup', name: 'signup', component: SignUp },
         { path: '/signin', name: 'signin', component: SignIn },
         { path: '/user', name: 'user', component: User },
