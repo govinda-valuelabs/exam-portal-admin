@@ -9,7 +9,7 @@
     width: 200px;
 }
 .side-h-screen {
-    height: calc(100vh - 188px);
+    height: calc(100vh - 100px);
 }
 .sign-in, .sign-up {
     margin: auto;
@@ -21,7 +21,12 @@
     border: 1px solid slategray;
     border-radius: 5px;
 }
-#my-chart-id {
-    max-width: 300px;
-    max-height: 300px;
+.student-chart {
+    display: block;
+    float: inline-start;
+    max-width: 380px;
+    height: 400px;
+}
+.chart-section {
+    min-height: calc(100vh - 136px);
 }
