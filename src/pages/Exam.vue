@@ -90,7 +90,7 @@ export default {
             <td class="px-6 py-4">{{ index + 1 }}.</td>
             <td class="px-6 py-4">{{ exam.studentId.name }}</td>
             <td class="px-6 py-4">{{ formatDateTime(exam.startTime) }}</td>
-            <td class="px-6 py-4">{{ formatDateTime(exam.startTime) }}</td>
+            <td class="px-6 py-4">{{ formatDateTime(exam.endTime) }}</td>
             <td class="px-6 py-4">{{ exam.questions.length }}</td>
             <td class="px-6 py-4 text-right">
               <router-link

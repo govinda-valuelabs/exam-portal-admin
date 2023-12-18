@@ -1,6 +1,6 @@
 <script>
 import AuthenticatedLayout from "../layouts/AuthenticatedLayout.vue";
-import uniqid from "uniqid";
+import ShortUniqueId from 'short-unique-id';
 import axios from 'axios';
 import Loader from "../components/Loader.vue";
 
@@ -19,7 +19,9 @@ export default {
   },
   mounted() {
     if (!this.$route.params.id) {
-      this.addOption();
+      for (let i in [0, 1, 2, 3]) {
+        this.addOption();
+      }
     } else {
       this.getQuestion();
     }
@@ -54,9 +56,10 @@ export default {
       this.loading = false;
     },
     addOption() {
-      const id = uniqid();
+      const { randomUUID } = new ShortUniqueId();
+
       this.question.options.push({
-        _id: id,
+        _id: randomUUID(),
         value: "",
       });
     },
@@ -76,54 +79,31 @@ export default {
           Question
         </h2>
         <Loader v-if="loading" class="mt-10" />
-        <div
-          v-else
-          class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6"
-        >
-          <div class="sm:col-span-4">
-            <label
-              for="title"
-              class="block text-sm font-medium leading-6 text-gray-900"
-              >Title</label
-            >
-            <div class="mt-2">
-              <div
-                class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md"
-              >
-                <input
-                  v-model="question.title"
-                  type="text"
-                  name="title"
-                  id="title"
-                  autocomplete="title"
-                  class="block flex-1 border-0 py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 w-full"
-                  placeholder="Question Title"
-                />
+        <div v-else class="w-full">
+          <form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+            <div class="min-w-full">
+              <label for="title" class="text-sm font-medium leading-6 text-gray-900">Title</label>
+              <div class="mt-2">
+                <div
+                  class="flex rounded-md">
+                  <input v-model="question.title" type="text" name="title" id="title" autocomplete="title"
+                    class="py-2 px-4 text-gray-900 placeholder:text-gray-400 w-full input-text"
+                    placeholder="Question Title" />
+                </div>
               </div>
             </div>
-          </div>
 
-          <div class="col-span-full">
-            <label
-              for="email"
-              class="block text-sm font-medium leading-6 text-gray-900"
-              >Options</label
-            >
-            <div class="mt-2">
-              <div
-                class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600"
-              >
-                <table
-                  class="w-full text-sm text-left rtl:text-right text-slate-950 dark:text-slate-950"
-                >
-                  <thead
-                    class="text-xs text-slate-950 uppercase bg-gray-50 dark:text-slate-950"
-                  >
-                    <tr>
-                      <th scope="col" class="px-6 py-3">Value</th>
-                      <th scope="col" class="px-6 py-3 text-right">Action</th>
-                    </tr>
-                  </thead>
+            <div class="col-span-full mt-6">
+              <label for="email" class="text-sm font-medium leading-6 text-gray-900 text-[18px]">Options</label>
+              <div class="mt-2 mb-6">
+                <div class="flex mt-6">
+                  <table class="w-full text-sm text-left rtl:text-right text-slate-950 dark:text-slate-950">
+                    <thead class="text-xs text-slate-950 uppercase bg-gray-50 dark:text-slate-950">
+                      <tr>
+                        <th scope="col">Value</th>
+                        <th scope="col" class="text-right">Action</th>
+                      </tr>
+                    </thead>
                   <tbody>
                     <tr
                       v-for="(op, index) in question.options"
@@ -144,7 +124,7 @@ export default {
                       <td class="px-6 py-4 text-right">
                         <button
                           type="button"
-                          class="focus:outline-none text-white float-right text-right bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+                          class="focus:outline-none text-white float-right text-right bg-red-700 hover:bg-red-800 font-medium text-xs px-3 rounded-md py-2"
                           @click="removeOption(op._id)"
                         >
                           Remove
@@ -156,7 +136,7 @@ export default {
               </div>
               <button
                 type="button"
-                class="rounded-md bg-cyan-700 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-cyan-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600 float-right mt-6"
+                class="rounded-md bg-cyan-700 px-3 py-2 text-xs font-semibold text-white shadow-sm focus-visible:outline-cyan-600 float-right mt-6"
                 @click="addOption()"
               >
                 Add Option
@@ -172,12 +152,12 @@ export default {
             >
             <div class="mt-2">
               <div
-                class="flex rounded-md shadow-sm"
+                class="flex-inline rounded-md shadow-sm"
               >
                 <div
                   v-for="(option, i) in question.options"
                   :key="`key${i}`"
-                  class="flex items-center"
+                  class="flex items-center mb-4"
                   >
                   <input
                     v-model="question.answer"
@@ -205,13 +185,14 @@ export default {
               </router-link>
               <button
                 type="button"
-                class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500"
                 @click="saveQuestion()"
               >
                 Save
               </button>
             </div>
           </div>
+        </form>
         </div>
       </div>
     </div>
