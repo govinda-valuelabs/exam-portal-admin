@@ -53,7 +53,7 @@ export default {
 </script>
 <template>
   <AuthenticatedLayout>
-    <div class="space-y-12 ml-6">
+    <div class="space-y-12 ml-6 w-full">
       <div class="border-b border-gray-900/10 pb-12">
         <h2 class="text-[32px] font-semibold leading-7 text-gray-900 mt-4">
           Student
@@ -130,7 +130,7 @@ export default {
                 />
               </div>
             </div>
-            <div class="mt-6 flex items-center justify-end gap-x-6">
+            <div class="mt-6 flex items-center justify-center gap-x-6">
               <router-link
                 to="/student"
                 class="text-sm font-semibold leading-6 text-gray-900"

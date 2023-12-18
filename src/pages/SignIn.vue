@@ -19,7 +19,6 @@ export default {
         this.empty = false;
         try {
           const result = await axios.post('http://localhost:8080/user/signin', { userEmail: this.email, password: this.password });
-          console.log('result ', result);
           if (result.status == 200) {
             localStorage.setItem('token', result.data.token);
             localStorage.setItem('name', result.data.name);

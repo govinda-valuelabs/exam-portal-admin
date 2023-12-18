@@ -34,9 +34,8 @@ export default {
           this.question = result.data;
         }
       } catch (error) {
-        
+
       }
-      
     },
     async saveQuestion() {
       this.loading = true;
@@ -63,9 +62,9 @@ export default {
         value: "",
       });
     },
-    removeOption(id) {
+    removeOption(value) {
       this.question.options = this.question.options.filter(
-        (op) => op._id != id
+        (op) => op.value != value
       );
     },
   },
@@ -174,6 +173,16 @@ export default {
                     >{{ option.value }}</label
                   >
                 </div>
+              </div>
+              <div class="mt-6 flex items-center justify-end gap-x-6">
+                <router-link to="/question" class="text-xs font-semibold leading-6 text-gray-900 bg-slate-500 px-3 py-2 rounded-md">
+                  Cancel
+                </router-link>
+                <button type="button"
+                  class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white"
+                  @click="saveQuestion()">
+                  Save
+                </button>
               </div>
             </div>
             <div class="mt-6 flex items-center justify-end gap-x-6">
