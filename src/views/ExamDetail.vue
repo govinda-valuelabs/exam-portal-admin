@@ -38,15 +38,18 @@ export default {
           totalCorrect ++;
         }
       });
+      console.log('totalRead ', totalRead);
       this.totalRead = totalRead;
       this.totalAttempt = totalAttempt;
       this.totalCorrect = totalCorrect;
     },
     getStudentAnswer(qst) {
       let question = isProxy(qst) ? toRaw(qst) : qst;
-      this.exam.questions = toRaw(this.exam.questions);
-      let examQuestion = this.exam.questions.find((q) => q.questionId == question._id);
-      examQuestion = toRaw(examQuestion);
+      this.exam = toRaw(this.exam);
+      let examQuestion = this.exam?.questions.find(
+        (q) => q.questionId == question._id
+      );
+
       if (!examQuestion || examQuestion.status != 'attempted') {
         return null;
       }

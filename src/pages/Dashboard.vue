@@ -3,10 +3,7 @@ import AuthenticatedLayout from '../layouts/AuthenticatedLayout.vue';
 import axios from 'axios';
 import {
 	Bar,
-	Line,
 	Pie,
-	PolarArea,
-	Radar,
 	Doughnut
 } from 'vue-chartjs'
 import {
@@ -23,7 +20,6 @@ import {
 	LinearScale
 } from 'chart.js';
 
-import { isProxy, toRaw } from 'vue';
 
 ChartJS.register(
 	ArcElement,
@@ -49,10 +45,7 @@ export default {
 		AuthenticatedLayout,
 		ExamList,
 		Bar,
-		Line,
 		Pie,
-		PolarArea,
-		Radar,
 		Doughnut,
 		StudentChart
 	},
@@ -169,11 +162,8 @@ export default {
 						<select v-if="openTab === 2" v-model="filter" class="float-right outline-none text-white bg-pink-600 border-l-2" @change="currentChart = null">
 							<option selected value="all">All</option>
 							<option value="bar">Bar</option>
-							<option value="line">Line</option>
 							<option value="pie">Pie</option>
 							<option value="doughnut">Doughnut</option>
-							<option value="polarArea">Polar Area</option>
-							<option value="radar">Radar</option>
 						</select>
 				</nav>
 				<div class="relative flex flex-col break-words bg-white w-full shadow-lg rounded">
@@ -193,15 +183,6 @@ export default {
 										ref="bar"
 										@click="el = 'bar'"
 									/>
-									<Line
-										v-if="['all', 'line'].includes(filter)"
-										class="student-chart ml-6"
-										:options="options"
-										:data="data"
-										:key="randomKey + 1"
-										ref="line"
-										@click="el = 'line'"
-									/>
 									<Pie
 										v-if="['all', 'pie'].includes(filter)"
 										class="student-chart ml-6"
@@ -220,23 +201,6 @@ export default {
 										ref="doughnut"
 										@click="el = 'doughnut'"
 									/>
-									<!-- <PolarArea
-										v-if="['all', 'polarArea'].includes(filter)"
-										class="student-chart ml-6" :options="options"
-										:data="polarArea"
-										:key="randomKey + 1"
-										ref="polarArea"
-										@click="el = 'polarArea'"
-									/>
-									<Radar
-										v-if="['all', 'radar'].includes(filter)"
-										class="student-chart ml-6"
-										:options="options"
-										:data="polarArea"
-										:key="randomKey + 1"
-										ref="radar"
-										@click="el = 'radar'"
-									/> -->
 								</div>
 							</div>
 						</div>

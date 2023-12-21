@@ -25,7 +25,7 @@
     display: block;
     float: inline-start;
     max-width: 520px;
-    height: 400px;
+    height: 580px;
 }
 .chart-section {
     min-height: calc(100vh - 136px);
