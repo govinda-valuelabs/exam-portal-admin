@@ -21,7 +21,9 @@ import {
 	BarElement,
 	CategoryScale,
 	LinearScale
-} from 'chart.js'
+} from 'chart.js';
+
+import { isProxy, toRaw } from 'vue';
 
 ChartJS.register(
 	ArcElement,
@@ -38,6 +40,7 @@ ChartJS.register(
 
 import ChartConfig from '../config/ChartConfig.js';
 import ExamList from '../components/ExamList.vue';
+import StudentChart from '../components/StudentChart.vue'
 
 export default {
 	name: 'Dashboard',
@@ -50,11 +53,14 @@ export default {
 		Pie,
 		PolarArea,
 		Radar,
-		Doughnut
+		Doughnut,
+		StudentChart
 	},
-	data: () => {
+	data: function() {
 		return {
+			el: 'bar',
 			filter: 'all',
+			exam: null,
 			openTab: 1,
 			exams: [],
 			questions: [],
@@ -77,8 +83,10 @@ export default {
 						display: true,
 						text: 'Student Questions Attempt'
 					}
-				}
+				},
+				onClick: this.handleClick
 			},
+			currentChart: null,
 		}
 	},
 	mounted() {
@@ -129,6 +137,16 @@ export default {
 		},
 		randomColorCode() {
 			return ('#' + (Math.floor(Math.random() * 16777215).toString(16)));
+		},
+		handleClick(event) {
+			if (!['bar', 'pie'].includes(this.el)) {
+				return false;
+			}
+			let chartInstance = this.$refs[this.el]
+			this.currentChart = this.el;
+			const studentName = chartInstance.chart.$context.chart.tooltip.title[0];
+			const exam = this.exams.find((ex) => ex.studentId.name == studentName);
+			this.exam = exam			
 		}
 	}
 }
@@ -148,7 +166,7 @@ export default {
 							:class="{ 'text-pink-600 bg-white': openTab !== 2, 'text-white bg-pink-600': openTab === 2 }">
 							Chart
 						</a>
-						<select v-if="openTab === 2" v-model="filter" class="float-right outline-none text-white bg-pink-600 border-l-2">
+						<select v-if="openTab === 2" v-model="filter" class="float-right outline-none text-white bg-pink-600 border-l-2" @change="currentChart = null">
 							<option selected value="all">All</option>
 							<option value="bar">Bar</option>
 							<option value="line">Line</option>
@@ -160,21 +178,69 @@ export default {
 				</nav>
 				<div class="relative flex flex-col break-words bg-white w-full shadow-lg rounded">
 					<div class="px-4 py-2 chart-section">
-						<div class="tab-content tab-space">
+						<div v-if="currentChart == null" class="tab-content tab-space">
 							<div :class="{ 'hidden': openTab !== 1, 'block': openTab === 1 }">
 								<ExamList />
 							</div>
 							<div :class="{ 'hidden': openTab !== 2, 'block': openTab === 2 }">
 								<div class="container ml-6">
-									<Bar v-if="['all', 'bar'].includes(filter)" class="student-chart ml-6" :options="options" :data="data" :key="randomKey" />
-									<Line v-if="['all', 'line'].includes(filter)" class="student-chart ml-6" :options="options" :data="data" :key="randomKey + 1" />
-									<Pie v-if="['all', 'pie'].includes(filter)" class="student-chart ml-6" :options="options" :data="doughnut" :key="randomKey + 1" />
-									<Doughnut v-if="['all', 'doughnut'].includes(filter)" class="student-chart ml-6" :options="options" :data="doughnut" :key="randomKey + 1" />
-									<PolarArea v-if="['all', 'polarArea'].includes(filter)" class="student-chart ml-6" :options="options" :data="polarArea" :key="randomKey + 1" />
-									<Radar v-if="['all', 'radar'].includes(filter)" class="student-chart ml-6" :options="options" :data="polarArea" :key="randomKey + 1" />
+									<Bar
+										v-if="['all', 'bar'].includes(filter)"
+										class="student-chart ml-6"
+										:options="options"
+										:data="data"
+										:key="randomKey"
+										ref="bar"
+										@click="el = 'bar'"
+									/>
+									<Line
+										v-if="['all', 'line'].includes(filter)"
+										class="student-chart ml-6"
+										:options="options"
+										:data="data"
+										:key="randomKey + 1"
+										ref="line"
+										@click="el = 'line'"
+									/>
+									<Pie
+										v-if="['all', 'pie'].includes(filter)"
+										class="student-chart ml-6"
+										:options="options"
+										:data="doughnut"
+										:key="randomKey + 1"
+										ref="pie"
+										@click="el = 'pie'"
+									/>
+									<Doughnut
+										v-if="['all', 'doughnut'].includes(filter)"
+										class="student-chart ml-6"
+										:options="options"
+										:data="doughnut"
+										:key="randomKey + 1"
+										ref="doughnut"
+										@click="el = 'doughnut'"
+									/>
+									<!-- <PolarArea
+										v-if="['all', 'polarArea'].includes(filter)"
+										class="student-chart ml-6" :options="options"
+										:data="polarArea"
+										:key="randomKey + 1"
+										ref="polarArea"
+										@click="el = 'polarArea'"
+									/>
+									<Radar
+										v-if="['all', 'radar'].includes(filter)"
+										class="student-chart ml-6"
+										:options="options"
+										:data="polarArea"
+										:key="randomKey + 1"
+										ref="radar"
+										@click="el = 'radar'"
+									/> -->
 								</div>
 							</div>
 						</div>
+						<StudentChart v-else :exam="exam" :questions="questions" :type="currentChart" @back="currentChart = null"/>
 					</div>
 				</div>
 			</div>
