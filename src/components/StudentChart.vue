@@ -22,6 +22,7 @@ export default {
       totalAttempt: 0,
       totalCorrect: 0,
       indexAxis: 'x',
+      backgroundColor: "#09F50D"
     };
   },
   computed: {
@@ -31,7 +32,7 @@ export default {
         datasets: [
           {
             label: 'Exam Stats',
-            backgroundColor: "#2452ae",
+            backgroundColor: this.backgroundColor,
             data: [
               this.totalRead,
               this.totalAttempt,
@@ -73,6 +74,15 @@ export default {
         <button type="button" class="px-4 py-2 bg-amber-600 float-right mb-8" @click="$emit('back')">Back</button>
         <br>
         <br>
+        <div class="col-span-full">
+            <label
+              for="email"
+              class="font-medium leading-6 text-gray-900 mr-6"
+              >Background Color</label
+            >
+            <input v-model="backgroundColor" type="color">
+          </div>
+        
         <br>
         <p v-if="type == 'bar'" class="block flex-inline">
           <span>Index Axis: </span> <button type="button" :class="`py-2 px-3 ${ indexAxis == 'x' ? 'bg-green-400' : 'bg-slate-300' } text-blue-500 rounded-md ml-8`" @click="indexAxis = 'x'">X</button>
