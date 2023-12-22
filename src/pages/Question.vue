@@ -3,8 +3,10 @@ import AuthenticatedLayout from "../layouts/AuthenticatedLayout.vue";
 import ConfirmModal from "../components/ConfirmModal.vue";
 import axios from 'axios';
 import Loader from "../components/Loader.vue";
+import IconTrash from '../components/icons/IconTrash.vue';
+import IconEdit from '../components/icons/IconEdit.vue';
 export default {
-  components: { AuthenticatedLayout, ConfirmModal, Loader },
+  components: { AuthenticatedLayout, ConfirmModal, Loader, IconTrash, IconEdit },
   name: "Question",
   data: () => {
     return {
@@ -49,11 +51,17 @@ export default {
         console.log('Error ', error.message);
       }
     },
+    getAnswer(q) {
+
+    }
   }
 };
 </script>
 <template>
   <AuthenticatedLayout>
+    <ConfirmModal v-if="showModal" @confirm="confirmDelete()" @cancel="showModal = false">
+      <p class="text-sm text-gray-500">Are you sure want to delete student?</p>
+    </ConfirmModal>
     <div class="table w-full">
       <div class="table-header-group">
         <h1 class="float-left text-[32px]">Questions ({{ total }})</h1>
@@ -86,19 +94,19 @@ export default {
           >
             <td class="px-6 py-4">{{ index + 1 }}.</td>
             <td class="px-6 py-4">{{ question.title }}</td>
-            <td class="px-6 py-4">{{ question.answer.value }}</td>
-            <td class="px-6 py-4 text-right">
+            <td class="px-6 py-4">{{ question.options.find((o) => o._id == question.answer).value }}</td>
+            <td class="px-3 py-2 text-right">
               <router-link
                 :to="`/question/edit/${question._id}`"
-                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                >Edit</router-link
+                class="text-white float-left"
+                ><IconEdit /></router-link
               >
               <button
                 type="button"
-                class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-                @click="onClickDelete(student._id)"
+                class="focus:outline-none text-white float-right"
+                @click="onClickDelete(question._id)"
               >
-                Delete
+                <IconTrash />
               </button>
             </td>
           </tr>

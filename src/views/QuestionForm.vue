@@ -9,16 +9,19 @@ export default {
   components: { AuthenticatedLayout, Loader },
   data: () => {
     return {
+      types: ['radio', 'checkbox', 'boolean', 'file'],
       question: {
         title: "",
         options: [],
         answer: null,
+        type: 'radio'
       },
       loading: false
     };
   },
   mounted() {
     if (!this.$route.params.id) {
+      // For type radio
       for (let i in [0, 1, 2, 3]) {
         this.addOption();
       }
@@ -56,11 +59,28 @@ export default {
     },
     addOption() {
       const { randomUUID } = new ShortUniqueId();
-
       this.question.options.push({
         _id: randomUUID(),
         value: "",
       });
+    },
+    onTypeChange(evt) {
+      const type = evt.target.value;
+      this.question.type = type;
+      this.question.options = [];
+      if (type == 'radio' || type == 'checkbox') {
+          // For type radio
+          for (let i in [0, 1, 2, 3]) {
+            this.addOption();
+          }
+        } else if (type == 'boolean') {
+          // For type boolean
+          for (let i in [0, 1]) {
+            this.addOption();
+          }
+        } else if (type == 'text') {
+          this.addOption();
+        }
     },
     removeOption(value) {
       this.question.options = this.question.options.filter(
@@ -81,10 +101,30 @@ export default {
         <div v-else class="w-full">
           <form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
             <div class="min-w-full">
+              <label for="type" class="text-sm font-medium leading-6 text-gray-900">Type</label>
+              <div class="mt-2 mb-4">
+                <div class="flex rounded-md">
+                  <select
+                    v-model="question.type"
+                    id="type"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    @change="onTypeChange"
+                  >
+                    <option value="radio">Radio</option>
+                    <option value="checkbox">Checkbox</option>
+                    <option value="text">Text</option>
+                    <option value="boolean">Boolean</option>
+                    <!-- <option value="file">File</option> -->
+                  </select>
+                </div>
+              </div>
+            </div>
+
+
+            <div class="min-w-full">
               <label for="title" class="text-sm font-medium leading-6 text-gray-900">Title</label>
               <div class="mt-2">
-                <div
-                  class="flex rounded-md">
+                <div class="flex rounded-md">
                   <input v-model="question.title" type="text" name="title" id="title" autocomplete="title"
                     class="py-2 px-4 text-gray-900 placeholder:text-gray-400 w-full input-text"
                     placeholder="Question Title" />
@@ -103,105 +143,70 @@ export default {
                         <th scope="col" class="text-right">Action</th>
                       </tr>
                     </thead>
-                  <tbody>
-                    <tr
-                      v-for="(op, index) in question.options"
-                      :key="index"
-                      class="bg-white border-b dark:border-gray-700"
-                    >
-                      <td class="px-6 py-4">
-                        <input
-                          v-model="question.options[index].value"
-                          type="text"
-                          name="title"
-                          id="title"
-                          autocomplete="title"
-                          class="block flex-1 border-0 py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 w-full"
-                          placeholder="Option Value"
-                        />
-                      </td>
-                      <td class="px-6 py-4 text-right">
-                        <button
-                          type="button"
-                          class="focus:outline-none text-white float-right text-right bg-red-700 hover:bg-red-800 font-medium text-xs px-3 rounded-md py-2"
-                          @click="removeOption(op._id)"
-                        >
-                          Remove
-                        </button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <button
-                type="button"
-                class="rounded-md bg-cyan-700 px-3 py-2 text-xs font-semibold text-white shadow-sm focus-visible:outline-cyan-600 float-right mt-6"
-                @click="addOption()"
-              >
-                Add Option
-              </button>
-            </div>
-          </div>
-
-          <div class="col-span-full">
-            <label
-              for="password"
-              class="block text-sm font-medium leading-6 text-gray-900"
-              >Answer</label
-            >
-            <div class="mt-2">
-              <div
-                class="flex-inline rounded-md shadow-sm"
-              >
-                <div
-                  v-for="(option, i) in question.options"
-                  :key="`key${i}`"
-                  class="flex items-center mb-4"
-                  >
-                  <input
-                    v-model="question.answer"
-                    :id="`default-radio-${i}`"
-                    type="radio"
-                    :value="option._id"
-                    name="default-radio"
-                    class="flex rounded-md sm:max-w-md ml-2"
-                    @change="question.answer = $event.target.value"
-                  />
-                  <label
-                    :for="`default-radio-${i}`"
-                    class="ms-2 text-sm font-medium text-black dark:text-black ml-2"
-                    >{{ option.value }}</label
-                  >
+                    <tbody>
+                      <tr v-for="(op, index) in question.options" :key="index"
+                        class="bg-white border-b dark:border-gray-700">
+                        <td class="px-6 py-4">
+                          <input
+                            v-if="['radio', 'boolean', 'checkbox'].includes(question.type)"
+                            v-model="question.options[index].value"
+                            type="text"
+                            class="block flex-1 border-0 py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 w-full"
+                            placeholder="Option Value"
+                          />
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                          <button type="button"
+                            class="focus:outline-none text-white float-right text-right bg-red-700 hover:bg-red-800 font-medium text-xs px-3 rounded-md py-2"
+                            @click="removeOption(op._id)">
+                            Remove
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
-              </div>
-              <div class="mt-6 flex items-center justify-end gap-x-6">
-                <router-link to="/question" class="text-xs font-semibold leading-6 text-gray-900 bg-slate-500 px-3 py-2 rounded-md">
-                  Cancel
-                </router-link>
                 <button type="button"
-                  class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white"
-                  @click="saveQuestion()">
-                  Save
+                  class="rounded-md bg-cyan-700 px-3 py-2 text-xs font-semibold text-white shadow-sm focus-visible:outline-cyan-600 float-right mt-6"
+                  @click="addOption()">
+                  Add Option
                 </button>
               </div>
             </div>
-            <div class="mt-6 flex items-center justify-end gap-x-6">
-              <router-link
-                to="/question"
-                class="text-sm font-semibold leading-6 text-gray-900"
-              >
-                Cancel
-              </router-link>
-              <button
-                type="button"
-                class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500"
-                @click="saveQuestion()"
-              >
-                Save
-              </button>
+
+            <div class="col-span-full">
+              <label for="password" class="block text-sm font-medium leading-6 text-gray-900">Answer</label>
+              <div class="mt-2">
+                <div class="flex-inline rounded-md shadow-sm">
+                  <div v-for="(option, i) in question.options" :key="`key${i}`" class="flex items-center mb-4">
+                    <div v-if="['radio', 'boolean', 'checkbox'].includes(question.type)" class="option">
+                      <input 
+                        v-model="question.answer"
+                        :id="`default-radio-${i}`"
+                        :type="`${question.type == 'checkbox' ? 'checkbox' : 'radio'}`"
+                        :value="option._id"
+                        name="default-radio"
+                        class="flex rounded-md sm:max-w-md ml-2"
+                        @change="question.answer = $event.target.value"
+                      />
+                      <label :for="`default-radio-${i}`" class="ms-2 text-sm font-medium text-black dark:text-black ml-2">{{
+                        option.value }}</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="mt-6 flex items-center justify-end gap-x-6">
+                  <router-link to="/question"
+                    class="text-xs font-semibold leading-6 text-gray-900 bg-slate-500 px-3 py-2 rounded-md">
+                    Cancel
+                  </router-link>
+                  <button type="button" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white"
+                    @click="saveQuestion()">
+                    Save
+                  </button>
+                </div>
+              </div>
             </div>
-          </div>
-        </form>
+          </form>
         </div>
       </div>
     </div>
