@@ -14,7 +14,8 @@ export default {
         title: "",
         options: [],
         answer: null,
-        type: 'radio'
+        type: 'radio',
+        document: null
       },
       loading: false
     };
@@ -114,7 +115,7 @@ export default {
                     <option value="checkbox">Checkbox</option>
                     <option value="text">Text</option>
                     <option value="boolean">Boolean</option>
-                    <!-- <option value="file">File</option> -->
+                    <option value="file">File</option>
                   </select>
                 </div>
               </div>
