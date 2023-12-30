@@ -34,7 +34,7 @@
               </router-link>
             </li>
             <li class="rounded-sm">
-              <router-link to="/user" class="flex items-center p-2 space-x-3 rounded-md">
+              <router-link to="/admin" class="flex items-center p-2 space-x-3 rounded-md">
                 <svg height="24px" width="24px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
                   xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 508.609 508.609" xml:space="preserve"
                   fill="#000000">
@@ -72,11 +72,11 @@
                   </g>
                 </svg>
 
-                <span>Users</span>
+                <span>Admin</span>
               </router-link>
             </li>
             <li class="rounded-sm">
-              <router-link to="/student" class="flex items-center p-2 space-x-3 rounded-md">
+              <router-link to="/user" class="flex items-center p-2 space-x-3 rounded-md">
                 <svg height="24px" width="24px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
                   xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 508.609 508.609" xml:space="preserve"
                   fill="#000000">
@@ -110,7 +110,7 @@
                   </g>
                 </svg>
 
-                <span>Students</span>
+                <span>Users</span>
               </router-link>
             </li>
             <li class="rounded-sm">

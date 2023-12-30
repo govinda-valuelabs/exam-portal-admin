@@ -39,10 +39,8 @@ export default {
             result = await axios.post('http://localhost:8080/user', this.user);
           }
 
-          console.log('result ', result);
-
           if (result.status == 201 || result.data.success) {
-              this.$router.push('/user');
+              this.$router.push('/admin');
           } 
         } catch (error) {
           console.log('Error ', error.message);
@@ -56,7 +54,7 @@ export default {
     <div class="space-y-12 ml-6">
       <div class="border-b border-gray-900/10 pb-12">
         <h2 class="text-[32px] font-semibold leading-7 text-gray-900 mt-4">
-          {{ user.name ? user.name : 'User' }}
+          {{ user.name ? user.name : 'Admin' }}
         </h2>
         <Loader v-if="loading" class="mt-10" />
         <div
@@ -132,7 +130,7 @@ export default {
             </div>
             <div class="mt-6 flex items-center justify-end gap-x-6">
               <router-link
-                to="/user"
+                to="/admin"
                 class="text-sm font-semibold leading-6 text-gray-900"
               >
                 Cancel

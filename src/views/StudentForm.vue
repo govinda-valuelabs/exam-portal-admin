@@ -39,10 +39,8 @@ export default {
             result = await axios.post('http://localhost:8080/student', this.student);
           }
 
-          console.log('result ', result);
-
           if (result.status == 201 || result.data.success) {
-              this.$router.push('/student');
+              this.$router.push('/user');
           } 
         } catch (error) {
           console.log('Error ', error.message);
@@ -132,7 +130,7 @@ export default {
             </div>
             <div class="mt-6 flex items-center justify-center gap-x-6">
               <router-link
-                to="/student"
+                to="/user"
                 class="text-sm font-semibold leading-6 text-gray-900"
               >
                 Cancel
