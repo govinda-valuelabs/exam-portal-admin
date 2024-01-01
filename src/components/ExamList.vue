@@ -59,7 +59,7 @@ export default {
 <template>
     <div class="table w-full">
       <div class="table-header-group">
-        <h1 class="float-left text-[32px]">Exams ({{ total }})</h1>
+        <h1 class="float-left text-[32px]">Survey ({{ total }})</h1>
       </div>
       <Loader v-if="loading" />
       <table
@@ -71,7 +71,7 @@ export default {
         >
           <tr>
             <th scope="col" class="px-6 py-3">S.No</th>
-            <th scope="col" class="px-6 py-3">Student</th>
+            <th scope="col" class="px-6 py-3">User</th>
             <th scope="col" class="px-6 py-3">Start Time</th>
             <th scope="col" class="px-6 py-3">End Time</th>
             <th scope="col" class="px-6 py-3">Total Attempt</th>
@@ -91,7 +91,7 @@ export default {
             <td class="px-6 py-4">{{ exam.questions.length }}</td>
             <td class="px-6 py-4 text-right">
               <router-link
-                :to="`/exam/detail/${exam._id}`"
+                :to="`/survey/detail/${exam._id}`"
                 class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 float-right"
                 >Details</router-link
               >

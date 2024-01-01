@@ -139,7 +139,7 @@
               </router-link>
             </li>
             <li class="rounded-sm">
-              <router-link to="/exam" class="flex items-center p-2 space-x-3 rounded-md">
+              <router-link to="/survey" class="flex items-center p-2 space-x-3 rounded-md">
                 <svg height="24px" width="24px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
                   xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 392.575 392.575" xml:space="preserve"
                   fill="#000000">
@@ -184,7 +184,7 @@
                   </g>
                 </svg>
 
-                <span>Exam</span>
+                <span>Survey</span>
               </router-link>
             </li>
           <li class="rounded-sm">

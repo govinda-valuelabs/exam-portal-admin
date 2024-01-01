@@ -54,7 +54,7 @@ export default {
     <div class="space-y-12 ml-6 w-full">
       <div class="border-b border-gray-900/10 pb-12">
         <h2 class="text-[32px] font-semibold leading-7 text-gray-900 mt-4">
-          Student
+          {{ student.name ? student.name : 'Student' }}
         </h2>
         <Loader v-if="loading" class="mt-10" />
         <div

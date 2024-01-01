@@ -82,7 +82,9 @@ export default {
           <tr>
             <th scope="col" class="px-6 py-3">S.No</th>
             <th scope="col" class="px-6 py-3">Title</th>
+            <th scope="col" class="px-6 py-3">Type</th>
             <th scope="col" class="px-6 py-3">Answer</th>
+            <th scope="col" class="px-6 py-3">Attachment Required</th>
             <th scope="col" class="px-6 py-3 text-right">Action</th>
           </tr>
         </thead>
@@ -94,7 +96,9 @@ export default {
           >
             <td class="px-6 py-4">{{ index + 1 }}.</td>
             <td class="px-6 py-4">{{ question.title }}</td>
-            <td class="px-6 py-4">{{ question.options.find((o) => o._id == question.answer).value }}</td>
+            <td class="px-6 py-4">{{ question.type.toUpperCase() }}</td>
+            <td class="px-6 py-4">{{ question.options.find((o) => o._id == question.answer)?.value }}</td>
+            <td class="px-6 py-4">{{ question.attachment }}</td>
             <td class="px-3 py-2 text-right">
               <router-link
                 :to="`/question/edit/${question._id}`"

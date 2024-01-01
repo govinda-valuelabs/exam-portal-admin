@@ -13,9 +13,9 @@ export default {
       question: {
         title: "",
         options: [],
-        answer: null,
+        answer: '',
         type: 'radio',
-        document: null
+        attachment: false
       },
       loading: false
     };
@@ -70,18 +70,18 @@ export default {
       this.question.type = type;
       this.question.options = [];
       if (type == 'radio' || type == 'checkbox') {
-          // For type radio
-          for (let i in [0, 1, 2, 3]) {
-            this.addOption();
-          }
-        } else if (type == 'boolean') {
-          // For type boolean
-          for (let i in [0, 1]) {
-            this.addOption();
-          }
-        } else if (type == 'text') {
+        // For type radio
+        for (let i in [0, 1, 2, 3]) {
           this.addOption();
         }
+      } else if (type == 'boolean') {
+        // For type boolean
+        for (let i in [0, 1]) {
+          this.addOption();
+        }
+      } else if (type == 'text') {
+        this.addOption();
+      }
     },
     removeOption(value) {
       this.question.options = this.question.options.filter(
@@ -105,12 +105,9 @@ export default {
               <label for="type" class="text-sm font-medium leading-6 text-gray-900">Type</label>
               <div class="mt-2 mb-4">
                 <div class="flex rounded-md">
-                  <select
-                    v-model="question.type"
-                    id="type"
+                  <select v-model="question.type" id="type"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    @change="onTypeChange"
-                  >
+                    @change="onTypeChange">
                     <option value="radio">Radio</option>
                     <option value="checkbox">Checkbox</option>
                     <option value="text">Text</option>
@@ -120,8 +117,6 @@ export default {
                 </div>
               </div>
             </div>
-
-
             <div class="min-w-full">
               <label for="title" class="text-sm font-medium leading-6 text-gray-900">Title</label>
               <div class="mt-2">
@@ -133,7 +128,7 @@ export default {
               </div>
             </div>
 
-            <div class="col-span-full mt-6">
+            <div v-if="question.type != 'file'" class="col-span-full mt-6">
               <label for="email" class="text-sm font-medium leading-6 text-gray-900 text-[18px]">Options</label>
               <div class="mt-2 mb-6">
                 <div class="flex mt-6">
@@ -148,13 +143,10 @@ export default {
                       <tr v-for="(op, index) in question.options" :key="index"
                         class="bg-white border-b dark:border-gray-700">
                         <td class="px-6 py-4">
-                          <input
-                            v-if="['radio', 'boolean', 'checkbox'].includes(question.type)"
-                            v-model="question.options[index].value"
-                            type="text"
+                          <input v-if="['radio', 'boolean', 'checkbox', 'text'].includes(question.type)"
+                            v-model="question.options[index].value" type="text"
                             class="block flex-1 border-0 py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 w-full"
-                            placeholder="Option Value"
-                          />
+                            placeholder="Option Value" />
                         </td>
                         <td class="px-6 py-4 text-right">
                           <button type="button"
@@ -167,34 +159,20 @@ export default {
                     </tbody>
                   </table>
                 </div>
-                <button type="button"
-                  class="rounded-md bg-cyan-700 px-3 py-2 text-xs font-semibold text-white shadow-sm focus-visible:outline-cyan-600 float-right mt-6"
-                  @click="addOption()">
-                  Add Option
-                </button>
+              </div>
+            </div>
+
+            <div v-else class="min-w-full mt-4">
+              <div class="flex items-center">
+                <input v-model="question.attachment" checked id="disabled-checked-checkbox" type="checkbox"
+                  class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                <label for="disabled-checked-checkbox"
+                  class="ms-2 text-sm font-medium">Attachment Required</label>
               </div>
             </div>
 
             <div class="col-span-full">
-              <label for="password" class="block text-sm font-medium leading-6 text-gray-900">Answer</label>
               <div class="mt-2">
-                <div class="flex-inline rounded-md shadow-sm">
-                  <div v-for="(option, i) in question.options" :key="`key${i}`" class="flex items-center mb-4">
-                    <div v-if="['radio', 'boolean', 'checkbox'].includes(question.type)" class="option">
-                      <input 
-                        v-model="question.answer"
-                        :id="`default-radio-${i}`"
-                        :type="`${question.type == 'checkbox' ? 'checkbox' : 'radio'}`"
-                        :value="option._id"
-                        name="default-radio"
-                        class="flex rounded-md sm:max-w-md ml-2"
-                        @change="question.answer = $event.target.value"
-                      />
-                      <label :for="`default-radio-${i}`" class="ms-2 text-sm font-medium text-black dark:text-black ml-2">{{
-                        option.value }}</label>
-                    </div>
-                  </div>
-                </div>
                 <div class="mt-6 flex items-center justify-end gap-x-6">
                   <router-link to="/question"
                     class="text-xs font-semibold leading-6 text-gray-900 bg-slate-500 px-3 py-2 rounded-md">

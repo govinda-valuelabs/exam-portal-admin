@@ -30,8 +30,8 @@ const routes = createRouter({
         { path: '/question', name: 'question', component: Question },
         { path: '/question/create', name: 'createquestion', component: QuestionForm },
         { path: '/question/edit/:id', name: 'editquestion', component: QuestionForm },
-        { path: '/exam', name: 'exam', component: Exam },
-        { path: '/exam/detail/:id', name: 'editexam', component: ExamDetail }
+        { path: '/survey', name: 'survey', component: Exam },
+        { path: '/survey/detail/:id', name: 'editsurvey', component: ExamDetail }
     ]
 });
 

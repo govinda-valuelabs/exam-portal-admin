@@ -88,9 +88,9 @@ export default {
     <div class="space-y-12 ml-6 w-1/2">
       <div class="border-b border-gray-900/10 pb-12">
         <h2 class="text-[32px] font-semibold leading-7 text-gray-900 mb-4 mt-4">
-          Exam Details
+          Survey Details
         </h2>
-        <p class="text-blue-700 font-bold text-[18px]">Total Seen: {{ totalRead }}, Total Attempt : {{ totalAttempt }}, Total Correct : {{ totalCorrect }}</p>
+        <p class="text-blue-700 font-bold text-[18px]">Total Seen: {{ totalRead }}, Total Attempt : {{ totalAttempt }}</p>
         <hr class="mt-6" />
         <Loader v-if="loading" class="mt-10" />
         <div v-else class="container p-4">
