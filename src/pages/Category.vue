@@ -7,10 +7,10 @@ import IconTrash from '../components/icons/IconTrash.vue';
 import IconEdit from '../components/icons/IconEdit.vue';
 export default {
   components: { AuthenticatedLayout, ConfirmModal, Loader, IconTrash, IconEdit },
-  name: "Question",
+  name: "Category",
   data: () => {
     return {
-        questions: [],
+        categories: [],
         loading: false,
         questionId: null,
         showModal: false,
@@ -24,9 +24,9 @@ export default {
     async getQuestions() {
         this.loading = true;
       try {
-        const results = await axios.get("http://localhost:8080/question");
+        const results = await axios.get("http://localhost:8080/category");
         if (results.status == 200) {
-          this.questions = results.data;
+          this.categories = results.data;
           this.total = results.data.length
         }
       } catch (error) {
@@ -40,11 +40,11 @@ export default {
     },
     async confirmDelete() {
       try {
-        const result = await axios.delete('http://localhost:8080/question/' + this.questionId);
+        const result = await axios.delete('http://localhost:8080/category/' + this.questionId);
         if (result.status == 204) {
           this.showModal = false;
           this.toaster.type = 'success';
-          this.toaster.message = 'Successfully deleted question!'
+          this.toaster.message = 'Successfully deleted category!'
           this.getQuestions()
         }
       } catch (error) {
@@ -60,15 +60,15 @@ export default {
 <template>
   <AuthenticatedLayout>
     <ConfirmModal v-if="showModal" @confirm="confirmDelete()" @cancel="showModal = false">
-      <p class="text-sm text-gray-500">Are you sure want to delete question?</p>
+      <p class="text-sm text-gray-500">Are you sure want to delete category?</p>
     </ConfirmModal>
     <div class="table w-full">
       <div class="table-header-group">
-        <h1 class="float-left text-[32px]">Questions ({{ total }})</h1>
+        <h1 class="float-left text-[32px]">Category ({{ total }})</h1>
         <router-link
-          to="/question/create"
+          to="/category/create"
           class="text-white bg-purple-700 hover:bg-purple-800 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900 float-right mt-2 mr-4 cursor-pointer"
-          >Add Question</router-link
+          >Add category</router-link
         >
       </div>
       <Loader v-if="loading" />
@@ -81,34 +81,28 @@ export default {
         >
           <tr>
             <th scope="col" class="px-6 py-3">S.No</th>
-            <th scope="col" class="px-6 py-3">Title</th>
-            <th scope="col" class="px-6 py-3">Category</th>
-            <th scope="col" class="px-6 py-3">Type</th>
-            <th scope="col" class="px-6 py-3">Attachment Required</th>
+            <th scope="col" class="px-6 py-3">Name</th>
             <th scope="col" class="px-6 py-3 text-right">Action</th>
           </tr>
         </thead>
         <tbody>
           <tr
-            v-for="(question, index) in questions"
+            v-for="(category, index) in categories"
             :key="index"
             class="bg-white border-b dark:border-gray-700"
           >
             <td class="px-6 py-4">{{ index + 1 }}.</td>
-            <td class="px-6 py-4">{{ question.title }}</td>
-            <td class="px-6 py-4">{{ question.category?.name }}</td>
-            <td class="px-6 py-4">{{ question.type.toUpperCase() }}</td>
-            <td class="px-6 py-4">{{ question.attachment }}</td>
+            <td class="px-6 py-4">{{ category.name }}</td>
             <td class="px-3 py-2 text-right">
               <router-link
-                :to="`/question/edit/${question._id}`"
+                :to="`/category/edit/${category._id}`"
                 class="text-white float-left"
                 ><IconEdit /></router-link
               >
               <button
                 type="button"
                 class="focus:outline-none text-white float-right"
-                @click="onClickDelete(question._id)"
+                @click="onClickDelete(category._id)"
               >
                 <IconTrash />
               </button>

@@ -12,15 +12,18 @@ export default {
       types: ['radio', 'checkbox', 'boolean', 'file'],
       question: {
         title: "",
+        category: '',
         options: [],
         answer: '',
         type: 'radio',
         attachment: false
       },
+      categories: [],
       loading: false
     };
   },
   mounted() {
+    this.getCategories();
     if (!this.$route.params.id) {
       // For type radio
       for (let i in [0, 1, 2, 3]) {
@@ -31,6 +34,16 @@ export default {
     }
   },
   methods: {
+    async getCategories() {
+      try {
+        const result = await axios.get('http://localhost:8080/category');
+        if (result.status == 200) {
+          this.categories = result.data;
+        }
+      } catch (error) {
+
+      }
+    },
     async getQuestion() {
       try {
         const result = await axios.get('http://localhost:8080/question/' + this.$route.params.id);
@@ -101,6 +114,17 @@ export default {
         <Loader v-if="loading" class="mt-10" />
         <div v-else class="w-full">
           <form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+            <div class="min-w-full">
+              <label for="category" class="text-sm font-medium leading-6 text-gray-900">Category</label>
+              <div class="mt-2 mb-4">
+                <div class="flex rounded-md">
+                  <select v-model="question.category" id="category"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <option v-for="(cat, ind) in categories" :value="cat._id">{{ cat.name }}</option>
+                  </select>
+                </div>
+              </div>
+            </div>
             <div class="min-w-full">
               <label for="type" class="text-sm font-medium leading-6 text-gray-900">Type</label>
               <div class="mt-2 mb-4">

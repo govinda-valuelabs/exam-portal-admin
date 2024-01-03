@@ -30,3 +30,7 @@
 .chart-section {
     min-height: calc(100vh - 136px);
 }
+.option {
+    display: flex;
+    justify-content: left;
+}

@@ -10,6 +10,8 @@ import SignIn from '../pages/SignIn.vue';
 import QuestionForm from '../views/QuestionForm.vue';
 import Exam from '../pages/Exam.vue';
 import ExamDetail from '../views/ExamDetail.vue';
+import Category from '../pages/Category.vue';
+import CategoryForm from '../views/CategoryForm.vue';
 
 const routes = createRouter({
     history: createWebHistory(),
@@ -27,6 +29,9 @@ const routes = createRouter({
         },
         {path: '/user/create', name: 'createstudent', component: StudentForm},
         {path: '/user/edit/:id', name: 'editstudent', component: StudentForm},
+        { path: '/category', name: 'category', component: Category },
+        { path: '/category/create', name: 'createcategory', component: CategoryForm },
+        { path: '/category/edit/:id', name: 'editcategory', component: CategoryForm },
         { path: '/question', name: 'question', component: Question },
         { path: '/question/create', name: 'createquestion', component: QuestionForm },
         { path: '/question/edit/:id', name: 'editquestion', component: QuestionForm },
