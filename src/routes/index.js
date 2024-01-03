@@ -12,6 +12,7 @@ import Exam from '../pages/Exam.vue';
 import ExamDetail from '../views/ExamDetail.vue';
 import Category from '../pages/Category.vue';
 import CategoryForm from '../views/CategoryForm.vue';
+import SurveyForm from '../views/SurveyForm.vue';
 
 const routes = createRouter({
     history: createWebHistory(),
@@ -36,6 +37,7 @@ const routes = createRouter({
         { path: '/question/create', name: 'createquestion', component: QuestionForm },
         { path: '/question/edit/:id', name: 'editquestion', component: QuestionForm },
         { path: '/survey', name: 'survey', component: Exam },
+        { path: '/survey/create', name: 'createsurvey', component: SurveyForm },
         { path: '/survey/detail/:id', name: 'editsurvey', component: ExamDetail }
     ]
 });

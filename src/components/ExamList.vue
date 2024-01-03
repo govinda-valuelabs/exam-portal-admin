@@ -60,6 +60,11 @@ export default {
     <div class="table w-full">
       <div class="table-header-group">
         <h1 class="float-left text-[32px]">Survey ({{ total }})</h1>
+        <router-link
+          to="/survey/create"
+          class="text-white bg-purple-700 hover:bg-purple-800 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900 float-right mt-2 mr-4 cursor-pointer"
+          >Assign Survey</router-link
+        >
       </div>
       <Loader v-if="loading" />
       <table
@@ -72,6 +77,7 @@ export default {
           <tr>
             <th scope="col" class="px-6 py-3">S.No</th>
             <th scope="col" class="px-6 py-3">User</th>
+            <th scope="col" class="px-6 py-3">Category</th>
             <th scope="col" class="px-6 py-3">Start Time</th>
             <th scope="col" class="px-6 py-3">End Time</th>
             <th scope="col" class="px-6 py-3">Total Attempt</th>
@@ -86,8 +92,9 @@ export default {
           >
             <td class="px-6 py-4">{{ index + 1 }}.</td>
             <td class="px-6 py-4">{{ exam.studentId.name }}</td>
-            <td class="px-6 py-4">{{ formatDateTime(exam.startTime) }}</td>
-            <td class="px-6 py-4">{{ formatDateTime(exam.endTime) }}</td>
+            <td class="px-6 py-4">{{ exam.category.name }}</td>
+            <td class="px-6 py-4">{{ exam.startTime ? formatDateTime(exam.startTime) : 'Not Yet' }}</td>
+            <td class="px-6 py-4">{{ exam.endTime ? formatDateTime(exam.endTime) : 'Not Yet' }}</td>
             <td class="px-6 py-4">{{ exam.questions.length }}</td>
             <td class="px-6 py-4 text-right">
               <router-link
