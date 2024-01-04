@@ -9,7 +9,7 @@ export default {
   components: { AuthenticatedLayout, Loader },
   data: () => {
     return {
-      types: ['radio', 'checkbox', 'boolean', 'file'],
+      types: ['radio', 'checkbox', 'boolean', 'text'],
       question: {
         title: "",
         category: '',
@@ -136,7 +136,6 @@ export default {
                     <option value="checkbox">Checkbox</option>
                     <option value="text">Text</option>
                     <option value="boolean">Boolean</option>
-                    <option value="file">File</option>
                   </select>
                 </div>
               </div>
@@ -152,7 +151,7 @@ export default {
               </div>
             </div>
 
-            <div v-if="question.type != 'file'" class="col-span-full mt-6">
+            <div v-if="question.type != 'text'" class="col-span-full mt-6">
               <label for="email" class="text-sm font-medium leading-6 text-gray-900 text-[18px]">Options</label>
               <div class="mt-2 mb-6">
                 <div class="flex mt-6">
@@ -186,7 +185,7 @@ export default {
               </div>
             </div>
 
-            <div v-else class="min-w-full mt-4">
+            <div class="min-w-full mt-4">
               <div class="flex items-center">
                 <input v-model="question.attachment" checked id="disabled-checked-checkbox" type="checkbox"
                   class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
