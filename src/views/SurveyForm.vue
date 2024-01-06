@@ -33,7 +33,7 @@ export default {
                     this.students = results.data;
                 }
             } catch (error) {
-                console.log('Error students ', error.message);
+                console.log('Error users ', error.message);
             }
         },
         async getCategories() {
@@ -95,7 +95,7 @@ export default {
                     </div>
 
                     <div class="min-w-full">
-                        <label for="studentId" class="text-sm font-medium leading-6 text-gray-900">Student</label>
+                        <label for="studentId" class="text-sm font-medium leading-6 text-gray-900">User</label>
                         <div class="mt-2 mb-4">
                             <div class="flex rounded-md">
                                 <select v-model="survey.studentId" id="studentId"

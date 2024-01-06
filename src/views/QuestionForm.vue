@@ -180,6 +180,17 @@ export default {
                         </td>
                       </tr>
                     </tbody>
+                    <tfoot>
+                      <tr class="bg-white border-b dark:border-gray-700">
+                        <td scope="col" colspan="2" class="px-6 py-4 text-right">
+                          <button type="button"
+                            class="focus:outline-none text-white float-right text-right bg-blue-700 hover:bg-blue-800 font-medium text-xs px-3 rounded-md py-2"
+                            @click="addOption()">
+                            Add Option
+                          </button>
+                        </td>
+                      </tr>
+                    </tfoot>
                   </table>
                 </div>
               </div>

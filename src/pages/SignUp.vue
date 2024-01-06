@@ -18,7 +18,6 @@ export default {
         this.empty = false;
         try {
           const result = await axios.post('http://localhost:8080/user', { name: this.name, email: this.email, password: this.password });
-          console.log('result ', result);
           if (result.status == 201) {
             this.$router.push('/signin');
           }
