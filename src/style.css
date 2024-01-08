@@ -5,13 +5,17 @@
 .exam-logo {
     height: 40px;
 }
+
 .sidebar {
     width: 200px;
 }
+
 .side-h-screen {
     height: calc(100vh - 100px);
 }
-.sign-in, .sign-up {
+
+.sign-in,
+.sign-up {
     margin: auto;
     display: block;
     width: 400px;
@@ -21,16 +25,36 @@
     border: 1px solid slategray;
     border-radius: 5px;
 }
+
 .student-chart {
     display: block;
     float: inline-start;
     max-width: 520px;
     height: 580px;
 }
+
 .chart-section {
     min-height: calc(100vh - 136px);
 }
+
 .option {
     display: flex;
     justify-content: left;
+}
+
+.attachment {
+    max-width: 100%;
+    float: right;
+    height: 60px;
+    top: -48px;
+    left: 48px;
+}
+
+.attachment-preview {
+    display: none;
+}
+.attachment:hover + .attachment-preview {
+    display: block;
+    position: absolute;
+    left: 10px;
 }
