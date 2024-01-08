@@ -14,6 +14,7 @@ import Category from '../pages/Category.vue';
 import CategoryForm from '../views/CategoryForm.vue';
 import SurveyForm from '../views/SurveyForm.vue';
 import Feedback from '../pages/Feedback.vue'
+import FeedbackDetail from '../views/FeedbackDetail.vue'
 
 const routes = createRouter({
     history: createWebHistory(),
@@ -40,8 +41,8 @@ const routes = createRouter({
         { path: '/survey', name: 'survey', component: Exam },
         { path: '/survey/create', name: 'createsurvey', component: SurveyForm },
         { path: '/survey/detail/:id', name: 'editsurvey', component: ExamDetail },
-        { path: '/feedback', name: 'feedback', component: Feedback }
-        // { path: '/feedback/detail/:id', name: 'editsurvey', component: ExamDetail }
+        { path: '/feedback', name: 'feedback', component: Feedback },
+        { path: '/feedback/detail/:id', name: 'feedbackdetail', component: FeedbackDetail }
     ]
 });
 

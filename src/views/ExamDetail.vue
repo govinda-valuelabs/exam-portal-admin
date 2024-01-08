@@ -19,7 +19,6 @@ export default {
   },
   mounted() {
     this.getExamDetails();
-    this.getQuestions();
   },
   methods: {
     calculateQuestions() {
@@ -38,7 +37,6 @@ export default {
           totalCorrect ++;
         }
       });
-      console.log('totalRead ', totalRead);
       this.totalRead = totalRead;
       this.totalAttempt = totalAttempt;
       this.totalCorrect = totalCorrect;
@@ -61,13 +59,13 @@ export default {
     },
     async getQuestions() {
       try {
-        const result = await axios.get('http://localhost:8080/question');
+        const result = await axios.get('http://localhost:8080/question/exam/' + this.exam.category);
         if (result.status == 200) {
           this.questions = result.data;
           this.calculateQuestions();
         }
       } catch (error) {
-
+        console.log('error q ', error.message);
       }
     },
     async getExamDetails() {
@@ -75,6 +73,7 @@ export default {
         const result = await axios.get('http://localhost:8080/exam/' + this.$route.params.id);
         if (result.status == 200) {
           this.exam = result.data;
+          this.getQuestions();
         }
       } catch (error) {
 
