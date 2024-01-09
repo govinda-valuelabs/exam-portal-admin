@@ -3,9 +3,13 @@ import ConfirmModal from "../components/ConfirmModal.vue";
 import axios from 'axios';
 import Loader from "../components/Loader.vue";
 import moment from 'moment';
+import IconTrash from '../components/icons/IconTrash.vue';
+import IconEdit from '../components/icons/IconEdit.vue';
+import IconPlusCircle from '../components/icons/IconPlusCircle.vue';
+import Vue3EasyDataTable from 'vue3-easy-data-table';
 
 export default {
-  components: { ConfirmModal, Loader },
+  components: { ConfirmModal, Loader, IconTrash, IconEdit, IconPlusCircle, DataTable: Vue3EasyDataTable },
   name: "ExamList",
   data: () => {
     return {
@@ -13,7 +17,28 @@ export default {
         loading: false,
         examId: null,
         showModal: false,
-        total: 0
+        total: 0,
+        itemsSelected: [],
+    }
+  },
+  computed: {
+    headers() {
+      return [
+        { text: "USER", value: "user" },
+        { text: "CATEGORY", value: "category"},
+        { text: "TOTAL ATTEMPT", value: "total"},
+        { text: "ACTION", value: "action"},
+      ];
+    },
+    items() {
+      return this.exams.map((item) => {
+        return {
+          user: item.studentId.name,
+          category: item.category.name,
+          total: item.questions.length,
+          action: item._id
+        }
+      })
     }
   },
   mounted() {
@@ -62,49 +87,29 @@ export default {
         <h1 class="float-left text-[32px]">Survey ({{ total }})</h1>
         <router-link
           to="/survey/create"
-          class="text-white bg-purple-700 hover:bg-purple-800 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900 float-right mt-2 mr-4 cursor-pointer"
-          >Assign Survey</router-link
+          class="text-white font-medium rounded-lg text-sm px-5 py-2.5 mb-2 border-2 border-blue-400 float-right mt-2 mr-4 cursor-pointer"
+          ><IconPlusCircle /></router-link
         >
       </div>
       <Loader v-if="loading" />
-      <table
+      <DataTable
         v-else
-        class="w-full text-sm text-left rtl:text-right text-slate-950 dark:text-slate-950"
+        buttons-pagination
+        v-model:items-selected="itemsSelected"
+        :headers="headers"
+        :items="items"
+        :checkbox-column-width="40"
+        show-index
+        :index-column-width="10"
+        border-cell
+        alternating
       >
-        <thead
-          class="text-xs text-slate-950 uppercase bg-gray-50 dark:text-slate-950"
-        >
-          <tr>
-            <th scope="col" class="px-6 py-3">S.No</th>
-            <th scope="col" class="px-6 py-3">User</th>
-            <th scope="col" class="px-6 py-3">Category</th>
-            <th scope="col" class="px-6 py-3">Start Time</th>
-            <th scope="col" class="px-6 py-3">End Time</th>
-            <th scope="col" class="px-6 py-3">Total Attempt</th>
-            <th scope="col" class="px-6 py-3 text-right">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="(exam, index) in exams"
-            :key="index"
-            class="bg-white border-b dark:border-gray-700"
-          >
-            <td class="px-6 py-4">{{ index + 1 }}.</td>
-            <td class="px-6 py-4">{{ exam.studentId.name }}</td>
-            <td class="px-6 py-4">{{ exam.category.name }}</td>
-            <td class="px-6 py-4">{{ exam.startTime ? formatDateTime(exam.startTime) : 'Not Yet' }}</td>
-            <td class="px-6 py-4">{{ exam.endTime ? formatDateTime(exam.endTime) : 'Not Yet' }}</td>
-            <td class="px-6 py-4">{{ exam.questions.length }}</td>
-            <td class="px-6 py-4 text-right">
-              <router-link
-                :to="`/survey/detail/${exam._id}`"
-                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 float-right"
-                >Details</router-link
-              >
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <template #item-action="item">
+        <router-link
+        :to="`/survey/detail/${item.action}`"
+          class="text-white rounded-lg text-sm px-3 py-1.5 mt-2 mb-2 border-2 border-blue-400 focus:outline-none float-right"
+          ><IconEdit /></router-link>
+      </template>
+      </DataTable>
     </div>
 </template>

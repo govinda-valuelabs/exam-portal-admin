@@ -31,7 +31,7 @@ export default {
         labels: [ 'Total Read', 'Total Attempt', 'Total Correct' ],
         datasets: [
           {
-            label: 'Exam Stats',
+            label: 'Survey Stats',
             backgroundColor: this.backgroundColor,
             data: [
               this.totalRead,
@@ -68,7 +68,7 @@ export default {
     <div class="space-y-12 ml-6 w-1/2">
       <div class="border-b border-gray-900/10 pb-12">
         <h2 class="text-[32px] font-semibold leading-7 text-gray-900 mb-4 mt-4">
-          Exam Details of student <span class="text-emerald-500">{{ exam.studentId.name }}</span>
+          Exam Details of user <span class="text-emerald-500">{{ exam.studentId.name }}</span>
         </h2>
         <p class="text-blue-700 font-bold text-[18px] float-left">Total Opened: {{ totalRead }}, Total Attempt : {{ totalAttempt }}, Total Correct : {{ totalCorrect }}</p>
         <button type="button" class="px-4 py-2 bg-amber-600 float-right mb-8" @click="$emit('back')">Back</button>

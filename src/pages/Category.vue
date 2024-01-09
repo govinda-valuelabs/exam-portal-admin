@@ -3,10 +3,12 @@ import AuthenticatedLayout from "../layouts/AuthenticatedLayout.vue";
 import ConfirmModal from "../components/ConfirmModal.vue";
 import axios from 'axios';
 import Loader from "../components/Loader.vue";
-import IconTrash from '../components/icons/IconTrash.vue';
 import IconEdit from '../components/icons/IconEdit.vue';
+import IconTrash from '../components/icons/IconTrash.vue';
+import IconPlusCircle from '../components/icons/IconPlusCircle.vue';
+import Vue3EasyDataTable from 'vue3-easy-data-table';
 export default {
-  components: { AuthenticatedLayout, ConfirmModal, Loader, IconTrash, IconEdit },
+  components: { AuthenticatedLayout, ConfirmModal, Loader, IconTrash, IconEdit, IconPlusCircle, DataTable: Vue3EasyDataTable },
   name: "Category",
   data: () => {
     return {
@@ -14,7 +16,24 @@ export default {
         loading: false,
         questionId: null,
         showModal: false,
-        total: 0
+        total: 0,
+        itemsSelected: [],
+    }
+  },
+  computed: {
+    headers() {
+      return [
+        { text: "NAME", value: "name"},
+        { text: "ACTION", value: "action"},
+      ];
+    },
+    items() {
+      return this.categories.map((item) => {
+        return {
+          name: item.name,
+          action: item._id
+        }
+      })
     }
   },
   mounted() {
@@ -65,51 +84,29 @@ export default {
     <div class="table w-full">
       <div class="table-header-group">
         <h1 class="float-left text-[32px]">Category ({{ total }})</h1>
-        <router-link
-          to="/category/create"
-          class="text-white bg-purple-700 hover:bg-purple-800 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900 float-right mt-2 mr-4 cursor-pointer"
-          >Add category</router-link
-        >
+        <router-link to="/category/create"
+          class="text-white font-medium rounded-lg text-sm px-5 py-2.5 mb-2 border-2 border-blue-400 float-right mt-2 mr-4 cursor-pointer"><IconPlusCircle /></router-link>
       </div>
       <Loader v-if="loading" />
-      <table
+      <DataTable
         v-else
-        class="w-full text-sm text-left rtl:text-right text-slate-950 dark:text-slate-950"
+        buttons-pagination
+        v-model:items-selected="itemsSelected"
+        :headers="headers"
+        :items="items"
+        :checkbox-column-width="40"
+        show-index
+        :index-column-width="10"
+        border-cell
+        alternating
       >
-        <thead
-          class="text-xs text-slate-950 uppercase bg-gray-50 dark:text-slate-950"
-        >
-          <tr>
-            <th scope="col" class="px-6 py-3">S.No</th>
-            <th scope="col" class="px-6 py-3">Name</th>
-            <th scope="col" class="px-6 py-3 text-right">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="(category, index) in categories"
-            :key="index"
-            class="bg-white border-b dark:border-gray-700"
-          >
-            <td class="px-6 py-4">{{ index + 1 }}.</td>
-            <td class="px-6 py-4">{{ category.name }}</td>
-            <td class="px-3 py-2 text-right">
-              <router-link
-                :to="`/category/edit/${category._id}`"
-                class="text-white float-left"
-                ><IconEdit /></router-link
-              >
-              <button
-                type="button"
-                class="focus:outline-none text-white float-right"
-                @click="onClickDelete(category._id)"
-              >
-                <IconTrash />
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <template #item-action="item">
+        <router-link
+          :to="`/category/edit/${item.action}`"
+          class="text-white rounded-lg text-sm px-3 py-1.5 mt-2 mb-2 border-2 border-blue-400 focus:outline-none float-right"
+          ><IconEdit /></router-link>
+      </template>
+      </DataTable>
     </div>
   </AuthenticatedLayout>
 </template>

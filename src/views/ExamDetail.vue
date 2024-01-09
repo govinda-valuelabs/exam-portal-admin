@@ -150,8 +150,10 @@ export default {
                   </ul>
                 </div>
                 <div class="w-1/2">
-                  <img v-if="attachments[question._id]" :src="attachments[question._id]" class="attachment" alt="attachment">
-                  <img v-if="attachments[question._id]" :src="attachments[question._id]" class="attachment-preview" alt="attachment">
+                  <img v-if="attachments[question._id]" :src="attachments[question._id]" class="attachment"
+                    alt="attachment">
+                  <img v-if="attachments[question._id]" :src="attachments[question._id]" class="attachment-preview"
+                    alt="attachment">
                 </div>
                 <p v-if="getStudentAnswer(question._id)" class="p-2 font-semibold text-green-500">User's Answer : {{
                   getStudentAnswer(question._id) }} </p>
@@ -163,4 +165,4 @@ export default {
         </div>
       </div>
     </div>
-</AuthenticatedLayout></template>
+  </AuthenticatedLayout></template>

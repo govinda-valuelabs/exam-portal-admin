@@ -74,7 +74,7 @@ export default {
 				plugins: {
 					title: {
 						display: true,
-						text: 'Student Questions Attempt'
+						text: 'User Questions Attempt'
 					}
 				},
 				onClick: this.handleClick
@@ -85,6 +85,7 @@ export default {
 	mounted() {
 		this.getQuestions();
 		this.getExams();
+
 	},
 	methods: {
 		toggleTabs(tabNumber) {
