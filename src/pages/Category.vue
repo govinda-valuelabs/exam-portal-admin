@@ -18,35 +18,50 @@ export default {
         showModal: false,
         total: 0,
         itemsSelected: [],
+        items: [],
+        filter: {
+          name: null
+        }
     }
   },
   computed: {
     headers() {
       return [
-        { text: "NAME", value: "name"},
+        { text: "NAME", value: "name", sortable: true},
         { text: "ACTION", value: "action"},
       ];
     },
-    items() {
-      return this.categories.map((item) => {
-        return {
-          name: item.name,
-          action: item._id
-        }
-      })
-    }
   },
   mounted() {
-    this.getQuestions();
+    this.getCategories();
   },
   methods: {
-    async getQuestions() {
+    listItems() {
+      const items = [];
+      this.categories.forEach((item) => {
+        let match = true;
+        let namePattern = new RegExp(this.filter.name, 'i');
+        if (this.filter.name && item.name.match(namePattern) == null) {
+          match = false;
+        }
+
+        if (match) {
+          items.push({
+            name: item.name,
+            action: item._id
+          })
+        }
+      })
+      this.items = items;
+    },
+    async getCategories() {
         this.loading = true;
       try {
         const results = await axios.get("http://localhost:8080/category");
         if (results.status == 200) {
           this.categories = results.data;
           this.total = results.data.length
+          this.listItems()
         }
       } catch (error) {
         console.log("Error ", error.message);
@@ -64,7 +79,7 @@ export default {
           this.showModal = false;
           this.toaster.type = 'success';
           this.toaster.message = 'Successfully deleted category!'
-          this.getQuestions()
+          this.getCategories()
         }
       } catch (error) {
         console.log('Error ', error.message);

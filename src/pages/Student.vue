@@ -4,8 +4,22 @@ import Loader from "../components/Loader.vue";
 import ConfirmModal from "../components/ConfirmModal.vue";
 import Toaster from "../components/Toaster.vue";
 import axios from "axios";
+import Vue3EasyDataTable from 'vue3-easy-data-table';
+import AdminFilter from "../components/AdminFilter.vue";
+import IconEdit from '../components/icons/IconEdit.vue';
+import IconPlusCircle from '../components/icons/IconPlusCircle.vue';
+
 export default {
-  components: { AuthenticatedLayout, Loader, ConfirmModal, Toaster },
+  components: {
+    AuthenticatedLayout,
+    Loader,
+    ConfirmModal,
+    Toaster,
+    IconEdit,
+    IconPlusCircle, 
+    DataTable: Vue3EasyDataTable,
+    AdminFilter
+  },
   name: "Student",
   data: () => {
     return {
@@ -16,13 +30,61 @@ export default {
       toaster: {
         type: '',
         message: ''
-      }
+      },
+      itemsSelected: [],
+      filter: {
+        name: null,
+        email: null
+      },
+      items: []
     };
+  },
+  computed: {
+    headers() {
+      return [
+        { text: "NAME", value: "name", sortable: true, direction: 'right'},
+        { text: "EMAIL", value: "email", sortable: true},
+        { text: "ACTION", value: "action"},
+      ];
+    },
   },
   mounted() {
     this.getStudents();
   },
   methods: {
+    clearFilter() {
+      this.filter = {
+        title: null,
+        category: null,
+        type: null,
+        attachment: null
+      }
+      this.listItems();
+    },
+    listItems() {
+      const items = [];
+      this.students.forEach((item) => {
+        let match = true;
+        let namePattern = new RegExp(this.filter.name, 'i');
+        let emailPattern = new RegExp(this.filter.email, 'i');
+        if (this.filter.name && item.name.match(namePattern) == null) {
+          match = false;
+        }
+
+        if (this.filter.email && item.email.name.match(emailPattern) == null) {
+          match = false;
+        }
+
+        if (match) {
+          items.push({
+            name: item.name,
+            email: item.email,
+            action: item._id
+          })
+        }
+      })
+      this.items = items;
+    },
     onClickDelete(studentId) {
       this.studentId = studentId;
       this.showModal = true;
@@ -46,6 +108,7 @@ export default {
         const results = await axios.get("http://localhost:8080/student");
         if (results.status == 200) {
           this.students = results.data;
+          this.listItems()
         }
       } catch (error) {
         console.log("Error ", error.message);
@@ -61,45 +124,46 @@ export default {
       <p class="text-sm text-gray-500">Are you sure want to delete student?</p>
     </ConfirmModal>
     <Toaster v-if="toaster.message" :type="toaster.type" :message="toaster.message" />
+    <AdminFilter @filter="listItems()" @clear="clearFilter()">
+      <div class="mb-5">
+        <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>
+        <input
+          type="text"
+          id="name"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          placeholder="Write name"
+          @keyup="filter.name = $event.target.value"
+        >
+      </div>
+      <div class="mb-5">
+        <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
+        <input
+          type="text"
+          id="email"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          placeholder="Type email"
+          @keyup="filter.email = $event.target.value"
+        >
+      </div>
+    </AdminFilter>
     <div class="table w-full">
       <div class="table-header-group">
         <h1 class="float-left text-[32px]">Users</h1>
-        <router-link
-          to="/user/create"
-          class="text-white bg-purple-700 hover:bg-purple-800 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900 float-right mt-2 mr-4 cursor-pointer"
-          >Add User</router-link
-        >
+        <router-link to="/user/create" title="Add User"
+          class="text-white font-medium rounded-lg text-sm px-5 py-2.5 mb-2 border-2 border-blue-400 float-right mt-2 mr-4 cursor-pointer">
+          <IconPlusCircle />
+        </router-link>
       </div>
       <Loader v-if="loading" />
-      <table
-        v-else
-        class="w-full text-sm text-left rtl:text-right text-slate-950 dark:text-slate-950"
-      >
-        <thead
-          class="text-xs text-slate-950 uppercase bg-gray-50 dark:text-slate-950"
-        >
-          <tr>
-            <th scope="col" class="px-6 py-3">Name</th>
-            <th scope="col" class="px-6 py-3">Email</th>
-            <th scope="col" class="px-6 py-3 text-right">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(student, index) in students" :key="index"  class="bg-white border-b dark:border-gray-700">
-            <td class="px-6 py-4">{{ student.name }}</td>
-            <td class="px-6 py-4">{{ student.email }}</td>
-            <td class="px-6 py-4 text-right">
-              <router-link
-                :to="`/user/edit/${student._id}`"
-                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                >Edit</router-link
-              >
-              <button type="button" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900" @click="onClickDelete(student._id)">Delete</button>
-
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <DataTable buttons-pagination v-model:items-selected="itemsSelected" :headers="headers" :items="items"
+        :checkbox-column-width="40" show-index :index-column-width="10" border-cell alternating>
+        <template #item-action="item">
+          <router-link :to="`/user/edit/${item.action}`"
+            class="text-white rounded-lg text-sm px-3 py-1.5 mt-2 mb-2 border-2 border-blue-400 focus:outline-none float-right">
+            <IconEdit />
+          </router-link>
+        </template>
+      </DataTable>
     </div>
   </AuthenticatedLayout>
 </template>
