@@ -67,11 +67,12 @@ export default {
         let match = true;
         let namePattern = new RegExp(this.filter.name, 'i');
         let emailPattern = new RegExp(this.filter.email, 'i');
+        
         if (this.filter.name && item.name.match(namePattern) == null) {
           match = false;
         }
 
-        if (this.filter.email && item.email.name.match(emailPattern) == null) {
+        if (this.filter.email && item.email.match(emailPattern) == null) {
           match = false;
         }
 
@@ -133,6 +134,7 @@ export default {
           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           placeholder="Write name"
           @keyup="filter.name = $event.target.value"
+          :value="filter.name"
         >
       </div>
       <div class="mb-5">
@@ -143,6 +145,7 @@ export default {
           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           placeholder="Type email"
           @keyup="filter.email = $event.target.value"
+          :value="filter.email"
         >
       </div>
     </AdminFilter>

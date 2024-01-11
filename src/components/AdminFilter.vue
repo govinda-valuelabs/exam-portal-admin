@@ -12,7 +12,7 @@ export default {
 </script>
 <template>
     <div class="filter-container">
-        <button v-if="!show" type="button"
+        <button v-if="!show" type="button" title="Filter"
             class="text-white  focus:ring-4 font-medium text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none"
             @click="show = true">
             <IconFilter />

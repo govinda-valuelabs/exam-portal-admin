@@ -163,6 +163,7 @@ export default {
           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           placeholder="Write question title"
           @keyup="filter.title = $event.target.value"
+          :value="filter.title"
         >
       </div>
       <div class="mb-5">
@@ -173,6 +174,7 @@ export default {
           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           placeholder="Type category name"
           @keyup="filter.category = $event.target.value"
+          :value="filter.category"
         >
       </div>
       <div class="mb-5">
@@ -181,6 +183,7 @@ export default {
           id="types"
           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           @change="filter.type = $event.target.value"
+          :value="filter.type"
         >
           <option value="">Select a type</option>
           <option v-for="t in types" :key="`option-${t}`" :value="t">{{ t.toUpperCase() }}</option>
@@ -192,6 +195,7 @@ export default {
           id="types"
           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           @change="filter.attachment = $event.target.value != '#' ? Boolean($event.target.value) : null"
+          :value="filter.attachment"
         >
           <option value="#"></option>
           <option value="">FALSE</option>
