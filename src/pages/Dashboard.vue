@@ -167,7 +167,7 @@ export default {
 							<option value="doughnut">Doughnut</option>
 						</select>
 				</nav>
-				<div class="relative flex flex-col break-words bg-white w-full shadow-lg rounded">
+				<div class="relative flex flex-col break-words w-full shadow-lg rounded">
 					<div class="px-4 py-2 chart-section">
 						<div v-if="currentChart == null" class="tab-content tab-space">
 							<div :class="{ 'hidden': openTab !== 1, 'block': openTab === 1 }">

@@ -1,25 +1,27 @@
 <script>
 import AuthenticatedLayout from '../layouts/AuthenticatedLayout.vue';
-import Loader from "../components/Loader.vue";
-import ConfirmModal from "../components/ConfirmModal.vue";
-import Toaster from "../components/Toaster.vue";
 import axios from "axios";
+import { FilterMatchMode } from 'primevue/api';
+import TableOperation from '../mixins/TableOperation';
 export default {
-    components: { AuthenticatedLayout, Loader, ConfirmModal, Toaster },
-    name: 'User',
-    data: function() {
-        return {
-            users: [],
-            loading: true,
-            showModal: false,
-            userId: null,
-            toaster: {
-                type: '',
-                message: ''
-            }
-        }
-    },
-    mounted() {
+  components: { AuthenticatedLayout },
+  mixins: [TableOperation],
+  name: 'User',
+  data: function () {
+    return {
+      users: [],
+      total: 0,
+      loading: true,
+      showModal: false,
+      userId: null,
+      filters: {
+        global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+        name: { value: null, matchMode: FilterMatchMode.CONTAINS },
+        email: { value: null, matchMode: FilterMatchMode.CONTAINS },
+      },
+    }
+  },
+  mounted() {
     this.getUsers();
   },
   methods: {
@@ -32,12 +34,10 @@ export default {
         const result = await axios.delete('http://localhost:8080/user/' + this.userId);
         if (result.status == 204) {
           this.showModal = false;
-          this.toaster.type = 'success';
-          this.toaster.message = 'Successfully deleted user!'
           this.getUsers()
         }
       } catch (error) {
-        
+
       }
     },
     async getUsers() {
@@ -46,6 +46,7 @@ export default {
         const results = await axios.get("http://localhost:8080/user");
         if (results.status == 200) {
           this.users = results.data;
+          this.total = results.data.length
         }
       } catch (error) {
         console.log("Error ", error.message);
@@ -56,50 +57,43 @@ export default {
 }
 </script>
 <template>
-    <AuthenticatedLayout>
-    <ConfirmModal v-if="showModal" @confirm="confirmDelete()" @cancel="showModal = false">
-      <p class="text-sm text-gray-500">Are you sure want to delete user?</p>
-    </ConfirmModal>
-    <Toaster v-if="toaster.message" :type="toaster.type" :message="toaster.message" />
+  <AuthenticatedLayout>
     <div class="table w-full">
       <div class="table-header-group">
-        <h1 class="float-left text-[32px]">Admin</h1>
-        <router-link
-          to="/admin/create"
-          class="text-white bg-purple-700 hover:bg-purple-800 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900 float-right mt-2 mr-4 cursor-pointer"
-          >Add Admin</router-link
-        >
+        <h1 class="float-left text-[32px]">Admin ( {{ total }})
+          <RouterLink to="admin/create" class="foat-right">
+            <Button class="button-add" icon="pi pi-plus-circle" severity="info" link v-tooltip.top="'Add Admin'" />
+          </RouterLink>
+        </h1>
       </div>
-      <Loader v-if="loading" />
-      <table
-        v-else
-        class="w-full text-sm text-left rtl:text-right text-slate-950 dark:text-slate-950"
-      >
-        <thead
-          class="text-xs text-slate-950 uppercase bg-gray-50 dark:text-slate-950"
-        >
-          <tr>
-            <th scope="col" class="px-6 py-3">Name</th>
-            <th scope="col" class="px-6 py-3">Email</th>
-            <th scope="col" class="px-6 py-3 text-right">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(user, index) in users" :key="index"  class="bg-white border-b dark:border-gray-700">
-            <td class="px-6 py-4">{{ user.name }}</td>
-            <td class="px-6 py-4">{{ user.email }}</td>
-            <td class="px-6 py-4 text-right">
-              <router-link
-                :to="`/admin/edit/${user._id}`"
-                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                >Edit</router-link
-              >
-              <button type="button" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900" @click="onClickDelete(user._id)">Delete</button>
-
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <DataTable filterDisplay="row" :value="users" v-model:filters="filters" ref="dt" dataKey="id"
+        tableStyle="min-width: 50rem" class="border-b-2" paginator :rows="5" :rowsPerPageOptions="[5, 10, 20, 50]">
+        <Column field="name" header="Name" sortable filter>
+          <template #filter="{ filterModel, filterCallback }">
+            <InputText v-model="filterModel.value" v-tooltip.top.focus="'Hit enter key to filter'" type="text"
+              placeholder="Name" @keydown.enter="filterCallback()" class="p-column-filter" />
+          </template>
+          <template #editor="{ data, field }">
+            <InputText v-model="data[field]" autofocus />
+          </template>
+        </Column>
+        <Column field="email" header="Email" sortable>
+          <template #filter="{ filterModel, filterCallback }">
+            <InputText v-model="filterModel.value" v-tooltip.top.focus="'Hit enter key to filter'" type="text"
+              @keydown.enter="filterCallback()" class="p-column-filter" placeholder="Email" />
+          </template>
+          <template #editor="{ data, field }">
+            <InputText v-model="data[field]" autofocus />
+          </template>
+        </Column>
+        <Column field="_id" header="Action">
+          <template #body="{ data }">
+            <router-link :to="`/admin/edit/${data._id}`">
+              <Button icon="pi pi-pencil" v-tooltip.top="'Edit'" />
+            </router-link>
+          </template>
+        </Column>
+      </DataTable>
     </div>
   </AuthenticatedLayout>
 </template>

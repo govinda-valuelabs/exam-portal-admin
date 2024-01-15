@@ -1,16 +1,13 @@
 <script>
 import ConfirmModal from "../components/ConfirmModal.vue";
 import axios from 'axios';
-import Loader from "../components/Loader.vue";
 import moment from 'moment';
-import IconTrash from '../components/icons/IconTrash.vue';
-import IconEdit from '../components/icons/IconEdit.vue';
-import IconPlusCircle from '../components/icons/IconPlusCircle.vue';
-import Vue3EasyDataTable from 'vue3-easy-data-table';
+import { FilterMatchMode } from 'primevue/api';
+import TableOperation from '../mixins/TableOperation';
 
 export default {
-  components: { ConfirmModal, Loader, IconTrash, IconEdit, IconPlusCircle, DataTable: Vue3EasyDataTable },
   name: "ExamList",
+  mixins: [TableOperation],
   data: () => {
     return {
         exams: [],
@@ -18,25 +15,23 @@ export default {
         examId: null,
         showModal: false,
         total: 0,
-        itemsSelected: [],
+        filters: {
+          global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+          user: { value: null, matchMode: FilterMatchMode.CONTAINS },
+          email: { value: null, matchMode: FilterMatchMode.CONTAINS },
+          category: { value: null, matchMode: FilterMatchMode.CONTAINS },
+        },
     }
   },
   computed: {
-    headers() {
-      return [
-        { text: "USER", value: "user" },
-        { text: "CATEGORY", value: "category"},
-        { text: "TOTAL ATTEMPT", value: "total"},
-        { text: "ACTION", value: "action"},
-      ];
-    },
     items() {
       return this.exams.map((item) => {
         return {
           user: item.studentId.name,
+          email: item.studentId.email,
           category: item.category.name,
           total: item.questions.length,
-          action: item._id
+          _id: item._id
         }
       })
     }
@@ -84,32 +79,50 @@ export default {
 <template>
     <div class="table w-full">
       <div class="table-header-group">
-        <h1 class="float-left text-[32px]">Survey ({{ total }})</h1>
-        <router-link
-          to="/survey/create"
-          class="text-white font-medium rounded-lg text-sm px-5 py-2.5 mb-2 border-2 border-blue-400 float-right mt-2 mr-4 cursor-pointer"
-          ><IconPlusCircle /></router-link
-        >
+        <h1 class="float-left text-[32px]">Survey ({{ total }})
+          <RouterLink to="survey/create" class="foat-right">
+            <Button class="button-add" icon="pi pi-plus-circle" severity="info" link v-tooltip.top="'Create Survey'" />
+          </RouterLink>
+        </h1>
       </div>
-      <Loader v-if="loading" />
-      <DataTable
-        v-else
-        buttons-pagination
-        v-model:items-selected="itemsSelected"
-        :headers="headers"
-        :items="items"
-        :checkbox-column-width="40"
-        show-index
-        :index-column-width="10"
-        border-cell
-        alternating
-      >
-      <template #item-action="item">
-        <router-link
-        :to="`/survey/detail/${item.action}`"
-          class="text-white rounded-lg text-sm px-3 py-1.5 mt-2 mb-2 border-2 border-blue-400 focus:outline-none float-right"
-          ><IconEdit /></router-link>
-      </template>
+      <DataTable filterDisplay="row" :value="items" v-model:filters="filters" ref="dt" dataKey="id"
+        tableStyle="min-width: 50rem" class="border-b-2" paginator :rows="5" :rowsPerPageOptions="[5, 10, 20, 50]">
+        <Column field="user" header="User Name" sortable filter>
+          <template #filter="{ filterModel, filterCallback }">
+            <InputText v-model="filterModel.value" v-tooltip.top.focus="'Hit enter key to filter'" type="text"
+              placeholder="User Name" @keydown.enter="filterCallback()" class="p-column-filter" />
+          </template>
+          <template #editor="{ data, field }">
+            <InputText v-model="data[field]" autofocus />
+          </template>
+        </Column>
+        <Column field="email" header="User Email" sortable>
+          <template #filter="{ filterModel, filterCallback }">
+            <InputText v-model="filterModel.value" v-tooltip.top.focus="'Hit enter key to filter'" type="text"
+              @keydown.enter="filterCallback()" class="p-column-filter" placeholder="Email" />
+          </template>
+          <template #editor="{ data, field }">
+            <InputText v-model="data[field]" autofocus />
+          </template>
+        </Column>
+        <Column field="category" header="Category" sortable>
+          <template #filter="{ filterModel, filterCallback }">
+            <InputText v-model="filterModel.value" v-tooltip.top.focus="'Hit enter key to filter'" type="text"
+              @keydown.enter="filterCallback()" class="p-column-filter" placeholder="Category" />
+          </template>
+          <template #editor="{ data, field }">
+            <InputText v-model="data[field]" autofocus />
+          </template>
+        </Column>
+        <Column field="total" header="Total Attempt" sortable>
+        </Column>
+        <Column field="_id" header="Action">
+          <template #body="{ data }">
+            <router-link :to="`/survey/detail/${data._id}`">
+              <Button icon="pi pi-eye" v-tooltip.top="'Edit'" />
+            </router-link>
+          </template>
+        </Column>
       </DataTable>
     </div>
 </template>

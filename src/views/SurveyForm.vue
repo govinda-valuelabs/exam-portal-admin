@@ -75,54 +75,22 @@ export default {
 </script>
 <template>
     <AuthenticatedLayout>
-        <div class="space-y-12 ml-6 w-full">
-            <div class="border-b border-gray-900/10 pb-12">
-                <h2 class="text-[32px] font-semibold leading-7 text-gray-900 mt-4">
-                    {{ heading }} Survey
-                </h2>
-                <Loader v-if="loading" class="mt-10" />
-                <div v-else class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                    <div class="min-w-full">
-                        <label for="category" class="text-sm font-medium leading-6 text-gray-900">Category</label>
-                        <div class="mt-2 mb-4">
-                            <div class="flex rounded-md">
-                                <select v-model="survey.category" id="category"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                                    <option v-for="(cat, ind) in categories" :value="cat._id">{{ cat.name }}</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="min-w-full">
-                        <label for="studentId" class="text-sm font-medium leading-6 text-gray-900">User</label>
-                        <div class="mt-2 mb-4">
-                            <div class="flex rounded-md">
-                                <select v-model="survey.studentId" id="studentId"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                                    <option v-for="(student, ind) in students" :value="student._id">{{ student.name }}
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-span-full">
-                        <div class="mt-2">
-                            <div class="mt-6 flex items-center justify-end gap-x-6">
-                                <router-link to="/survey"
-                                    class="text-xs font-semibold leading-6 text-gray-900 bg-slate-500 px-3 py-2 rounded-md">
-                                    Cancel
-                                </router-link>
-                                <button type="button"
-                                    class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white"
-                                    @click="saveSurvey()">
-                                    Save
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <div class="block m-auto">
+            <h1>Assign Survey</h1>
+            <div class="card flex justify-content-center mb-6">
+                <Dropdown v-model="survey.studentId" :options="students" optionLabel="name" placeholder="Select a user"
+                    class="w-full md:w-14rem" />
             </div>
+            <div class="card flex justify-content-center mb-6">
+                <Dropdown v-model="survey.category" :options="categories" optionLabel="name" placeholder="Select a category"
+                    class="w-full md:w-14rem" />
+            </div>
+            <div class="card flex justify-content-center flex-wrap gap-3">
+            <Button label="Save" severity="success" @click="saveSurvey()"/>
+            <RouterLink to="/survey">
+              <Button label="Cancel" severity="secondary" />
+            </RouterLink>
+          </div>
         </div>
     </AuthenticatedLayout>
 </template>

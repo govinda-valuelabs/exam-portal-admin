@@ -1,12 +1,10 @@
 <script>
-  export default {
-    name: 'GuestLayout'
-  }
+export default {
+  name: 'GuestLayout'
+}
 </script>
 <template>
-    <div class="flex h-screen">
-      <div class="m-auto bg-gray-50 dark:text-slate-100 p-4">
-    </div>
+  <div class="flex h-screen m-auto">
     <slot />
   </div>
 </template>

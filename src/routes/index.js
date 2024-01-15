@@ -31,8 +31,8 @@ const routes = createRouter({
             name: 'user',
             component: Student
         },
-        {path: '/user/create', name: 'createstudent', component: StudentForm},
-        {path: '/user/edit/:id', name: 'editstudent', component: StudentForm},
+        {path: '/user/create', name: 'createuser', component: StudentForm},
+        {path: '/user/edit/:id', name: 'edituser', component: StudentForm},
         { path: '/category', name: 'category', component: Category },
         { path: '/category/create', name: 'createcategory', component: CategoryForm },
         { path: '/category/edit/:id', name: 'editcategory', component: CategoryForm },

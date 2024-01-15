@@ -2,14 +2,19 @@
 import AuthenticatedLayout from "../layouts/AuthenticatedLayout.vue";
 import ShortUniqueId from 'short-unique-id';
 import axios from 'axios';
-import Loader from "../components/Loader.vue";
+import { useToast } from "primevue/usetoast";
 
 export default {
   name: "QuestionForm",
-  components: { AuthenticatedLayout, Loader },
+  components: { AuthenticatedLayout },
   data: () => {
     return {
-      types: ['radio', 'checkbox', 'boolean', 'text'],
+      types: [
+        { value: 'radio', text: 'Radio' },
+        { value: 'checkbox', text: 'Checkbox' },
+        { value: 'boolean', text: 'Boolean' },
+        { value: 'text', text: 'Text' }
+      ],
       question: {
         title: "",
         category: '',
@@ -19,8 +24,14 @@ export default {
         attachment: false
       },
       categories: [],
-      loading: false
+      loading: false,
+      toast: useToast()
     };
+  },
+  computed: {
+    heading() {
+      return this.$route.params.id ? 'Edit Question' : 'Add Question';
+    }
   },
   mounted() {
     this.getCategories();
@@ -60,6 +71,7 @@ export default {
         let result;
         if (this.$route.params.id) {
           result = await axios.patch('http://localhost:8080/question/' + this.$route.params.id, this.question);
+          this.toast.add({ severity: 'success', summary: 'Success', detail: 'Question was saved successfully!', life: 3000 })
         } else {
           result = await axios.post('http://localhost:8080/question', this.question);
         }
@@ -79,7 +91,7 @@ export default {
       });
     },
     onTypeChange(evt) {
-      const type = evt.target.value;
+      const type = evt.value;
       this.question.type = type;
       this.question.options = [];
       if (type == 'radio' || type == 'checkbox') {
@@ -98,7 +110,7 @@ export default {
     },
     removeOption(value) {
       this.question.options = this.question.options.filter(
-        (op) => op.value != value
+        (op) => op._id != value
       );
     },
   },
@@ -106,121 +118,60 @@ export default {
 </script>
 <template>
   <AuthenticatedLayout>
-    <div class="space-y-12 ml-6 w-1/2">
-      <div class="border-b border-gray-900/10 pb-12">
-        <h2 class="text-[32px] font-semibold leading-7 text-gray-900 mt-4">
-          Question
-        </h2>
-        <Loader v-if="loading" class="mt-10" />
-        <div v-else class="w-full">
-          <form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-            <div class="min-w-full">
-              <label for="category" class="text-sm font-medium leading-6 text-gray-900">Category</label>
-              <div class="mt-2 mb-4">
-                <div class="flex rounded-md">
-                  <select v-model="question.category" id="category"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <option v-for="(cat, ind) in categories" :value="cat._id">{{ cat.name }}</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-            <div class="min-w-full">
-              <label for="type" class="text-sm font-medium leading-6 text-gray-900">Type</label>
-              <div class="mt-2 mb-4">
-                <div class="flex rounded-md">
-                  <select v-model="question.type" id="type"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    @change="onTypeChange">
-                    <option value="radio">Radio</option>
-                    <option value="checkbox">Checkbox</option>
-                    <option value="text">Text</option>
-                    <option value="boolean">Boolean</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-            <div class="min-w-full">
-              <label for="title" class="text-sm font-medium leading-6 text-gray-900">Title</label>
-              <div class="mt-2">
-                <div class="flex rounded-md">
-                  <input v-model="question.title" type="text" name="title" id="title" autocomplete="title"
-                    class="py-2 px-4 text-gray-900 placeholder:text-gray-400 w-full input-text"
-                    placeholder="Question Title" />
-                </div>
-              </div>
-            </div>
+    <div class="block m-auto w-full p-4">
+      <h1>{{ heading }}</h1>
+      <div class="card flex mb-6">
+        <span class="p-float-label w-full">
+          <InputText id="title" class="w-full" v-model="question.title" placeholder="Enter question title" />
+          <label for="title">Title</label>
+        </span>
+      </div>
 
-            <div v-if="question.type != 'text'" class="col-span-full mt-6">
-              <label for="email" class="text-sm font-medium leading-6 text-gray-900 text-[18px]">Options</label>
-              <div class="mt-2 mb-6">
-                <div class="flex mt-6">
-                  <table class="w-full text-sm text-left rtl:text-right text-slate-950 dark:text-slate-950">
-                    <thead class="text-xs text-slate-950 uppercase bg-gray-50 dark:text-slate-950">
-                      <tr>
-                        <th scope="col">Value</th>
-                        <th scope="col" class="text-right">Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr v-for="(op, index) in question.options" :key="index"
-                        class="bg-white border-b dark:border-gray-700">
-                        <td class="px-6 py-4">
-                          <input v-if="['radio', 'boolean', 'checkbox', 'text'].includes(question.type)"
-                            v-model="question.options[index].value" type="text"
-                            class="block flex-1 border-0 py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 w-full"
-                            placeholder="Option Value" />
-                        </td>
-                        <td class="px-6 py-4 text-right">
-                          <button type="button"
-                            class="focus:outline-none text-white float-right text-right bg-red-700 hover:bg-red-800 font-medium text-xs px-3 rounded-md py-2"
-                            @click="removeOption(op._id)">
-                            Remove
-                          </button>
-                        </td>
-                      </tr>
-                    </tbody>
-                    <tfoot>
-                      <tr class="bg-white border-b dark:border-gray-700">
-                        <td scope="col" colspan="2" class="px-6 py-4 text-right">
-                          <button type="button"
-                            class="focus:outline-none text-white float-right text-right bg-blue-700 hover:bg-blue-800 font-medium text-xs px-3 rounded-md py-2"
-                            @click="addOption()">
-                            Add Option
-                          </button>
-                        </td>
-                      </tr>
-                    </tfoot>
-                  </table>
-                </div>
-              </div>
-            </div>
+      <div class="card flex mb-6 w-full">
+        <Dropdown v-model="question.category" :options="categories" optionLabel="name" optionValue="_id" class="w-full"
+          placeholder="Select a category" />
+      </div>
 
-            <div class="min-w-full mt-4">
-              <div class="flex items-center">
-                <input v-model="question.attachment" checked id="disabled-checked-checkbox" type="checkbox"
-                  class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                <label for="disabled-checked-checkbox"
-                  class="ms-2 text-sm font-medium">Attachment Required</label>
-              </div>
-            </div>
+      <div class="card flex mb-6 w-full">
+        <Dropdown v-model="question.type" :options="types" optionLabel="text" optionValue="value" class="w-full"
+          placeholder="Select a type" @change="onTypeChange" />
+      </div>
 
-            <div class="col-span-full">
-              <div class="mt-2">
-                <div class="mt-6 flex items-center justify-end gap-x-6">
-                  <router-link to="/question"
-                    class="text-xs font-semibold leading-6 text-gray-900 bg-slate-500 px-3 py-2 rounded-md">
-                    Cancel
-                  </router-link>
-                  <button type="button" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white"
-                    @click="saveQuestion()">
-                    Save
-                  </button>
-                </div>
-              </div>
+      <div v-if="question.type != 'text'" class="col-span-full mt-6">
+        <DataTable :value="question.options" tableStyle="min-width: 50rem">
+          <template #header>
+            <div class="flex flex-wrap align-items-center justify-content-between gap-2">
+              <span class="text-xl text-900 font-bold">Options</span>
             </div>
-          </form>
+          </template>
+          <Column field="value" header="Value" class="w-full">
+            <template #body="{ data, field }">
+              <InputText id="value" class="w-full" v-model="data[field]" />
+            </template>
+          </Column>
+          <Column field="_id" header="Remove">
+            <template #body="{ data }">
+              <Button icon="pi pi-times" severity="danger" rounded v-tooltip.top="'Remove'"
+                @click="removeOption(data._id)" />
+            </template>
+          </Column>
+          <template #footer>
+            <div class="flex align-items-end" style="justify-content: end; margin-right: 13px;">
+              <Button icon="pi pi-plus-circle" rounded raised v-tooltip.top="'Add Option'" style="float: right;"
+                @click="addOption()" />
+            </div>
+          </template>
+        </DataTable>
+        <div class="card flex justify-content-start mt-6">
+          <Checkbox v-model="question.attachment" :binary="true" />
+          <label for="ingredient1" class="ml-2"> Attachment Required </label>
         </div>
+      </div>
+      <div class="card flex justify-content-center flex-wrap gap-3">
+        <RouterLink to="/question">
+          <Button label="Back" severity="secondary" />
+        </RouterLink>
+        <Button label="Save" severity="success" @click="saveQuestion()"/>
       </div>
     </div>
   </AuthenticatedLayout>

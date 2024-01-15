@@ -1,18 +1,22 @@
 <script>
 import AuthenticatedLayout from "../layouts/AuthenticatedLayout.vue";
-import ConfirmModal from "../components/ConfirmModal.vue";
 import axios from 'axios';
-import Loader from "../components/Loader.vue";
-import IconDetail from '../components/icons/IconDetail.vue';
-import Vue3EasyDataTable from 'vue3-easy-data-table';
+import { FilterMatchMode } from 'primevue/api';
+import TableOperation from '../mixins/TableOperation';
 export default {
-  components: { AuthenticatedLayout, ConfirmModal, Loader, IconDetail, DataTable: Vue3EasyDataTable },
+  components: { AuthenticatedLayout },
   name: "Feedback",
+  mixins: [TableOperation],
   data: () => {
     return {
         feedbacks: [],
         loading: false,
-        total: 0
+        total: 0,
+        filters: {
+          global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+          'student.name': { value: null, matchMode: FilterMatchMode.CONTAINS },
+          comment: { value: null, matchMode: FilterMatchMode.CONTAINS },
+        },
     }
   },
   mounted() {
@@ -32,6 +36,9 @@ export default {
       }
       this.loading = false;
     },
+    renderDescription(rowData) {
+      console.log('rowData ', rowData);
+    }
   }
 };
 </script>
@@ -40,34 +47,32 @@ export default {
     <div class="table w-full">
       <div class="table-header-group">
         <h1 class="float-left text-[32px]">Feedback ({{ total }})</h1>
-        
       </div>
-      <Loader v-if="loading" />
-      <table
-        v-else
-        class="w-full text-sm text-left rtl:text-right text-slate-950 dark:text-slate-950"
-      >
-        <thead
-          class="text-xs text-slate-950 uppercase bg-gray-50 dark:text-slate-950"
-        >
-          <tr>
-            <th scope="col" class="px-6 py-3">S.No</th>
-            <th scope="col" class="px-6 py-3">User</th>
-            <th scope="col" class="px-6 py-3">Comment</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="(feedback, index) in feedbacks"
-            :key="index"
-            class="bg-white border-b dark:border-gray-700"
-          >
-            <td class="px-6 py-4">{{ index + 1 }}.</td>
-            <td class="px-6 py-4">{{ feedback.student.name }}</td>
-            <td class="px-6 py-4" v-html="feedback.comment"></td>
-          </tr>
-        </tbody>
-      </table>
+      <DataTable filterDisplay="row" :value="feedbacks" v-model:filters="filters" ref="dt" dataKey="id"
+        tableStyle="min-width: 50rem" class="border-b-2" paginator :rows="5" :rowsPerPageOptions="[5, 10, 20, 50]">
+        <Column field="student.name" header="User Name" sortable filter>
+          <template #filter="{ filterModel, filterCallback }">
+            <InputText v-model="filterModel.value" v-tooltip.top.focus="'Hit enter key to filter'" type="text"
+              placeholder="Name" @keydown.enter="filterCallback()" class="p-column-filter" />
+          </template>
+        </Column>
+        <Column field="comment" header="Comment" sortable :body="renderDescription" style="max-width: 420px;">
+          <template #filter="{ filterModel, filterCallback }">
+            <InputText v-model="filterModel.value" v-tooltip.top.focus="'Hit enter key to filter'" type="text"
+              @keydown.enter="filterCallback()" class="p-column-filter" placeholder="Comment" />
+          </template>
+          <template #body="rowData">
+            <div v-html="rowData.data.comment"></div>
+          </template>
+        </Column>
+        <Column field="_id" header="Action">
+          <template #body="{ data }">
+            <router-link :to="`/feedback/detail/${data._id}`">
+              <Button icon="pi pi-eye" v-tooltip.top="'Detail'" />
+            </router-link>
+          </template>
+        </Column>
+      </DataTable>
     </div>
   </AuthenticatedLayout>
 </template>

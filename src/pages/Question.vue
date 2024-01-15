@@ -1,26 +1,12 @@
 <script>
 import AuthenticatedLayout from "../layouts/AuthenticatedLayout.vue";
-import ConfirmModal from "../components/ConfirmModal.vue";
 import axios from 'axios';
-import Loader from "../components/Loader.vue";
-import IconTrash from '../components/icons/IconTrash.vue';
-import IconEdit from '../components/icons/IconEdit.vue';
-import IconPlusCircle from '../components/icons/IconPlusCircle.vue';
-import Vue3EasyDataTable from 'vue3-easy-data-table';
-import AdminFilter from "../components/AdminFilter.vue";
-
+import { FilterMatchMode } from 'primevue/api';
+import TableOperation from '../mixins/TableOperation.js';
+import ExportData from '../mixins/ExportData.js'
 export default {
-  components: {
-    AuthenticatedLayout,
-    ConfirmModal,
-    Loader,
-    IconTrash,
-    IconEdit,
-    IconPlusCircle,
-    DataTable: Vue3EasyDataTable,
-    AdminFilter
-  },
-
+  components: { AuthenticatedLayout },
+  mixins: [TableOperation, ExportData],
   name: "Question",
   data: () => {
     return {
@@ -28,30 +14,17 @@ export default {
       loading: false,
       questionId: null,
       showModal: false,
-      category: null,
       cateogries: [],
-      itemsSelected: [],
-      types: ['boolean', 'checkbox', 'radio', 'text'],
       total: 0,
-      filter: {
-        title: null,
-        category: null,
-        type: null,
-        attachment: null
+      filters: {
+        global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+        title: { value: null, matchMode: FilterMatchMode.CONTAINS },
+        category: { value: null, matchMode: FilterMatchMode.CONTAINS },
+        type: { value: null, matchMode: FilterMatchMode.EQUALS },
+        attachment: { value: null, matchMode: FilterMatchMode.EQUALS },
       },
       items: []
     }
-  },
-  computed: {
-    headers() {
-      return [
-        { text: "TITLE", value: "title", sortable: true },
-        { text: "CATEGORY", value: "category", sortable: true },
-        { text: "TYPE", value: "type", sortable: true },
-        { text: "ATTACHMENT REQUIRED", value: "attachment" },
-        { text: "ACTION", value: "action" },
-      ];
-    },
   },
   mounted() {
     this.getCategories();
@@ -61,35 +34,13 @@ export default {
     listItems() {
       const items = [];
       this.questions.forEach((item) => {
-        let match = true;
-        let titlePattern = new RegExp(this.filter.title, 'i');
-        let categoryPattern = new RegExp(this.filter.category, 'i');
-        let typePattern = new RegExp(this.filter.type, 'i');
-        if (this.filter.title && item.title.match(titlePattern) == null) {
-          match = false;
-        }
-
-        if (this.filter.category && item.category.name.match(categoryPattern) == null) {
-          match = false;
-        }
-
-        if (this.filter.type && item.type.match(typePattern) == null) {
-          match = false;
-        }
-
-        if ([true, false].includes(this.filter.attachment) && item.attachment !== this.filter.attachment) {
-          match = false;
-        }
-
-        if (match) {
-          items.push({
-            title: item.title,
-            category: item.category.name,
-            type: item.type.toUpperCase(),
-            attachment: item.attachment,
-            action: item._id
-          })
-        }
+        items.push({
+          title: item.title,
+          category: item.category.name,
+          type: item.type.toUpperCase(),
+          attachment: item.attachment,
+          action: item._id
+        })
       })
       this.items = items;
     },
@@ -102,9 +53,6 @@ export default {
     async getQuestions() {
       this.loading = true;
       let url = "http://localhost:8080/question";
-      if (this.category) {
-        url += '?category=' + this.category;
-      }
       try {
         const results = await axios.get(url);
         if (results.status == 200) {
@@ -113,7 +61,7 @@ export default {
           this.listItems();
         }
       } catch (error) {
-        console.log("Error ", error.message);
+        console.log("Error ", error);
       }
       this.loading = false;
     },
@@ -133,93 +81,62 @@ export default {
       } catch (error) {
         console.log('Error ', error.message);
       }
-    },
-    updateSort(item) {
-      console.log('update sort item : ', item);
-    },
-    clearFilter() {
-      this.filter = {
-        title: null,
-        category: null,
-        type: null,
-        attachment: null
-      }
-      this.listItems();
     }
   }
 };
 </script>
 <template>
   <AuthenticatedLayout>
-    <ConfirmModal v-if="showModal" @confirm="confirmDelete()" @cancel="showModal = false">
-      <p class="text-sm text-gray-500">Are you sure want to delete question?</p>
-    </ConfirmModal>
-    <AdminFilter @filter="listItems()" @clear="clearFilter()">
-      <div class="mb-5">
-        <label for="title" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Title</label>
-        <input
-          type="text"
-          id="title"
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          placeholder="Write question title"
-          @keyup="filter.title = $event.target.value"
-          :value="filter.title"
-        >
-      </div>
-      <div class="mb-5">
-        <label for="category" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Category</label>
-        <input
-          type="text"
-          id="category"
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          placeholder="Type category name"
-          @keyup="filter.category = $event.target.value"
-          :value="filter.category"
-        >
-      </div>
-      <div class="mb-5">
-        <label for="types" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Type</label>
-        <select
-          id="types"
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          @change="filter.type = $event.target.value"
-          :value="filter.type"
-        >
-          <option value="">Select a type</option>
-          <option v-for="t in types" :key="`option-${t}`" :value="t">{{ t.toUpperCase() }}</option>
-        </select>
-      </div>
-      <div class="mb-5">
-        <label for="types" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Attachment Required</label>
-        <select
-          id="types"
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          @change="filter.attachment = $event.target.value != '#' ? Boolean($event.target.value) : null"
-          :value="filter.attachment"
-        >
-          <option value="#"></option>
-          <option value="">FALSE</option>
-          <option value="true">TRUE </option>
-        </select>
-      </div>
-    </AdminFilter>
     <div class="table w-full">
       <div class="table-header-group">
-        <h1 class="float-left text-[32px]">Questions ({{ total }})</h1>
-        <router-link to="/question/create" title="Add Question"
-          class="text-white font-medium rounded-lg text-sm px-5 py-2.5 mb-2 border-2 border-blue-400 float-right mt-2 mr-4 cursor-pointer">
-          <IconPlusCircle />
-        </router-link>
+        <h1 class="float-left text-[32px]">Questions ({{ total }})
+          <RouterLink to="question/create" class="foat-right">
+            <Button class="button-add" icon="pi pi-plus-circle" severity="info" link v-tooltip.top="'Add Question'" />
+          </RouterLink>
+        </h1>
       </div>
-      <Loader v-if="loading" />
-      <DataTable buttons-pagination v-model:items-selected="itemsSelected" :headers="headers" :items="items"
-        :checkbox-column-width="40" show-index :index-column-width="10" border-cell alternating @update-sort="updateSort">
-        <template #item-action="item">
-          <router-link :to="`/question/edit/${item.action}`" title="Edit"
-            class="text-white rounded-lg text-sm px-3 py-1.5 mt-2 mb-2 border-2 border-blue-400 focus:outline-none float-right">
-            <IconEdit />
-          </router-link>
+      <DataTable filterDisplay="row" :value="items" v-model:filters="filters" ref="dt" dataKey="id" class="border-b-2" paginator :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]">
+        <template #header>
+          <div style="text-align: left">
+            <Button icon="pi pi-external-link" label="Export Excel" @click="exportData('excel')" class="mr-2"/>
+            <Button icon="pi pi-external-link" label="Export PDF" @click="exportData('pdf')" severity="success" />
+          </div>
         </template>
+        <Column field="title" header="Title" sortable filter>
+          <template #filter="{ filterModel, filterCallback }">
+            <InputText v-model="filterModel.value" v-tooltip.top.focus="'Hit enter key to filter'" type="text"
+              placeholder="Title" @keydown.enter="filterCallback()" class="p-column-filter" />
+          </template>
+          <template #editor="{ data, field }">
+            <InputText v-model="data[field]" autofocus />
+          </template>
+        </Column>
+        <Column field="category" header="Category" sortable>
+          <template #filter="{ filterModel, filterCallback }">
+            <InputText v-model="filterModel.value" v-tooltip.top.focus="'Hit enter key to filter'" type="text"
+              @keydown.enter="filterCallback()" class="p-column-filter" placeholder="Category" />
+          </template>
+          <template #editor="{ data, field }">
+            <InputText v-model="data[field]" autofocus />
+          </template>
+        </Column>
+        <Column field="type" header="Type" sortable>
+          <template #filter="{ filterModel, filterCallback }">
+            <InputText v-model="filterModel.value" v-tooltip.top.focus="'Hit enter key to filter'" type="text"
+              placeholder="Type" @keydown.enter="filterCallback()" class="p-column-filter" />
+          </template>
+          <template #editor="{ data, field }">
+            <InputText v-model="data[field]" autofocus />
+          </template>
+        </Column>
+        <Column field="attachment" header="Attachment"></Column>
+        <Column field="action" header="Action">
+          <template #body="{ data }">
+            <router-link :to="`/question/edit/${data.action}`">
+              <Button icon="pi pi-pencil" v-tooltip.top="'Edit'" />
+            </router-link>
+          </template>
+        </Column>
       </DataTable>
     </div>
   </AuthenticatedLayout>
