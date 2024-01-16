@@ -10,14 +10,13 @@ export default {
             const models = ['admin', 'user', 'category', 'question'];
             if (models.includes(route)) {
                 const result = await axios.post('http://localhost:8080/export', { model: route, type});
-                console.log('result ', result);
-                // if (result.data && result.data.path) {
-                //     const a = document.createElement('a');
-                //     a.id = 'export';
-                //     a.href = result.data.path;
-                //     a.download = true;
-                //     a.click();
-                // }
+                if (result.data && result.data.path) {
+                    const a = document.createElement('a');
+                    a.id = 'export';
+                    a.href = result.data.path;
+                    a.download = true;
+                    a.click();
+                }
             }
         }
     }
