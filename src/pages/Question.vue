@@ -95,7 +95,16 @@ export default {
           </RouterLink>
         </h1>
       </div>
-      <DataTable filterDisplay="row" :value="items" v-model:filters="filters" ref="dt" dataKey="id" class="border-b-2" paginator :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]">
+      <DataTable
+        id="question"
+        filterDisplay="row"
+        :value="items"
+        v-model:filters="filters"
+        ref="dt" dataKey="id"
+        class="border-b-2"
+        paginator :rows="10"
+        :rowsPerPageOptions="[10, 20, 50, 100]"
+      >
         <template #header>
           <div style="text-align: left">
             <Button icon="pi pi-external-link" label="Export Excel" @click="exportData('excel')" class="mr-2"/>
